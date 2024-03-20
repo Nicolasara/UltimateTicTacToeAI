@@ -6,8 +6,6 @@ from ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, SimpleGames
 
 # UltimateTicTacToe interface
 class UltimateTicTacToe:
-    board = [[TicTacToe(), TicTacToe(), TicTacToe()], [TicTacToe(), TicTacToe(), TicTacToe()], [TicTacToe(), TicTacToe(), TicTacToe()]]
-
     @abstractmethod
     def get_turn(self) -> PlayerType:
         pass
@@ -31,7 +29,6 @@ class UltimateTicTacToe:
     def is_game_over() -> bool:
         pass
 
-    @abstractmethod
     def toString() -> str:
         pass
     
@@ -200,4 +197,3 @@ def ultimate_board_state_to_simple_games(board: UltimateBoardState) -> SimpleGam
             gamesRow.append(TicTacToe(simpleBoard, defaultSimpleRuleBook))
         simpleGames.append(gamesRow)
     return simpleGames
-    

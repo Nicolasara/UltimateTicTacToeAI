@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from ruleBook import RuleBook
+from ruleBook import RuleBook, defaultRuleBook
 from simpleTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
 
 # TicTacToe interface
@@ -167,7 +167,7 @@ class TurnLessTicTacToe(TicTacToe):
     def is_board_full(self) -> bool:
         for row in self.board:
             for cell in row:
-                if cell == CellState.EMPTY:
+                if cell == CellState.EMPTY.value:
                     return False
         return True
 
@@ -199,9 +199,10 @@ class TurnLessTicTacToe(TicTacToe):
 
         #if there is winner, print it surrounded by spaces
         if self.is_game_over():
+            winner = self.winner() if self.winner() != None else "-"
             for t in range(5):
                 if t == 2:
-                    boardString += " " * 5 + self.winner() + " " * 5 + "\n"
+                    boardString += " " * 5 + winner.value + " " * 5 + "\n"
                 else:
                     boardString += " " * 11 + "\n"
             return boardString
@@ -212,6 +213,8 @@ class TurnLessTicTacToe(TicTacToe):
             #print each column in the row
             for c in range(3):
                 col = row[c]
+                if col == '':
+                    col = " "
                 boardString += " " + col + " "
                 #divider
                 if c != 2:
@@ -240,4 +243,4 @@ class TicTacToeFactory:
             ['', '', ''],
             ['', '', '']
         ]
-        return TurnLessTicTacToe(emptyBoard)
+        return TurnLessTicTacToe(emptyBoard, defaultRuleBook)
