@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, TicTacToe, TurnLessTicTacToe, CellState
+from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, CellState
+from unitTicTacToe.unitTicTacToe import TicTacToe, TurnLessTicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as defaultUnitRuleBook
 from ultimateTicTacToe.ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, UnitGames
@@ -63,17 +64,22 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
             unitMove = move[1]
             unitGame = self.unitGames[ultimateMove[0]][ultimateMove[1]]
             unitGame.make_move(unitMove, self.turn)
+            self.pastMove = move
             self.rotate_turn()
         else:
             raise Exception("Invalid move.")
         
     def possible_moves(self) -> list[UltimateMove]:
         possibleMoves = []
-        for row in range(3):
-            for column in range(3):
-                unitGame = self.unitGames[row][column]
-                for move in unitGame.possible_moves():
-                    possibleMoves.append(((row, column), move))
+        for ultimateRow in range(3):
+            for ultimateColumn in range(3):
+                ultimateMove = (ultimateRow, ultimateColumn)
+                for unitRow in range(3):
+                    for unitColumn in range(3):
+                        unitMove = (unitRow, unitColumn)
+                        move = (ultimateMove, unitMove)
+                        if self.ruleBook.is_valid(self.get_board_copy(), move, self.pastMove):
+                            possibleMoves.append(move)
         return possibleMoves
     
     def has_someone_won(self) -> bool:
@@ -200,8 +206,8 @@ def ultimate_board_state_to_unit_games(board: UltimateBoardState) -> UnitGames:
 
 class UltimateTicTacToeFactory:
     @staticmethod
-    def emptyTurnLessGame() -> UltimateTicTacToe:
+    def emptyStrictGame() -> UltimateTicTacToe:
         emptyBoard = [[[[CellState.EMPTY for _ in range(3)] for _ in range(3)] for _ in range(3)] for _ in range(3)]
         return StrictUltimateTicTacToe(emptyBoard, defaultUltimateRuleBook)
     
-game = UltimateTicTacToeFactory.emptyTurnLessGame()
+game = UltimateTicTacToeFactory.emptyStrictGame()
