@@ -97,7 +97,7 @@ class TurnLessTicTacToe(TicTacToe):
     
     def make_move(self, move: Move, player: PlayerType):
         if (self.ruleBook.is_valid(self.get_board_copy(), move)):
-            self.board[move[0]][move[1]] = player.value
+            self.board[move[0]][move[1]] = player
         else:
             raise Exception("Invalid move.")
 
@@ -124,7 +124,7 @@ class TurnLessTicTacToe(TicTacToe):
         threesInARow = self.get_threes_in_a_row()
         for cells in threesInARow:
             if self.is_three_in_a_row(cells):
-                if cells[0] == 'X':
+                if cells[0] == CellState.X:
                     xThreesInARow += 1
                 else:
                     oThreesInARow += 1
@@ -167,7 +167,7 @@ class TurnLessTicTacToe(TicTacToe):
     def is_board_full(self) -> bool:
         for row in self.board:
             for cell in row:
-                if cell == CellState.EMPTY.value:
+                if cell == CellState.EMPTY:
                     return False
         return True
 
@@ -192,7 +192,7 @@ class TurnLessTicTacToe(TicTacToe):
             return [self.board[0][2], self.board[1][1], self.board[2][0]]
     
     def is_three_in_a_row(self, cells: list[CellState]) -> bool:
-        return cells[0] == cells[1] == cells[2] and cells[0] != ''
+        return cells[0] == cells[1] == cells[2] and cells[0] != CellState.EMPTY
     
     def toString(self) -> str:
         boardString = ""
@@ -213,7 +213,7 @@ class TurnLessTicTacToe(TicTacToe):
             #print each column in the row
             for c in range(3):
                 col = row[c]
-                if col == '':
+                if col == CellState.EMPTY:
                     col = " "
                 boardString += " " + col + " "
                 #divider
@@ -237,10 +237,10 @@ class TurnLessTicTacToe(TicTacToe):
         
 class TicTacToeFactory:
     @staticmethod
-    def emptyTurnLessGame() -> TicTacToe:
+    def empty_turn_less_game() -> TicTacToe:
         emptyBoard = [
-            ['', '', ''],
-            ['', '', ''],
-            ['', '', '']
+            [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
+            [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
+            [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
         ]
         return TurnLessTicTacToe(emptyBoard, defaultRuleBook)

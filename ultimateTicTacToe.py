@@ -201,7 +201,7 @@ def ultimate_board_state_to_simple_games(board: UltimateBoardState) -> SimpleGam
 class UltimateTicTacToeFactory:
     @staticmethod
     def emptyTurnLessGame() -> UltimateTicTacToe:
-        emptyBoard = [[[['' for _ in range(3)] for _ in range(3)] for _ in range(3)] for _ in range(3)]
+        emptyBoard = [[[[CellState.EMPTY for _ in range(3)] for _ in range(3)] for _ in range(3)] for _ in range(3)]
         return StrictUltimateTicTacToe(emptyBoard, defaultUltimateRuleBook)
     
 game = UltimateTicTacToeFactory.emptyTurnLessGame()
