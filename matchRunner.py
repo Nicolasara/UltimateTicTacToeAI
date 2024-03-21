@@ -1,5 +1,5 @@
 from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe, UltimateTicTacToeFactory
-from simpleTicTacToe import PlayerType
+from unitTicTacToe import PlayerType
 
 # play a game between two AI players and return the winner
 def playAGame(playerX, playerO, print_game = False):

@@ -1,10 +1,10 @@
-from unitTicTacToe.simpleTicTacToeTypes import BoardState, Move
-from unitTicTacToe.simpleTicTacToe import TicTacToe
+from unitTicTacToe.unitTicTacToeTypes import BoardState, Move
+from unitTicTacToe.unitTicTacToe import TicTacToe
 
 UltimateBoardState = list[list[BoardState]]
 
-# A UltimateMove is a tuple of two Moves where the first Move is the simple board to play on and the second Move is the move to make on that simple board.
+# A UltimateMove is a tuple of two Moves where the first Move is the unit board to play on and the second Move is the move to make on that unit board.
 UltimateMove = tuple[Move, Move]
 
 # A SimplGame is a list of 3 lists consisting of 3 TicTacToe games each
-SimpleGames = list[list[TicTacToe]]
+UnitGames = list[list[TicTacToe]]

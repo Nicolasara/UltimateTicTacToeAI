@@ -1,7 +1,7 @@
 from unitTicTacToe.ruleBook import defaultRuleBook, move_on_empty_cell, move_in_bounds, game_has_not_been_won
-from unitTicTacToe.simpleTicTacToe import TicTacToe, TurnLessTicTacToe, TicTacToeFactory
-from unitTicTacToe.simpleTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
-from examples import emptySimpleBoard, tiedSimpleBoard, wonSimpleBoard, ticTacToeBoard1
+from unitTicTacToe.unitTicTacToe import TicTacToe, TurnLessTicTacToe, TicTacToeFactory
+from unitTicTacToe.unitTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
+from examples import emptyUnitBoard, tiedUnitBoard, wonUnitBoard, ticTacToeBoard1
 
 print("Testing Unit Tic Tac Toe Factory")
 
@@ -15,7 +15,7 @@ def unit_board_states_equal(board1: BoardState, board2: BoardState) -> bool:
     return True
 
 emptyTurnLessGame = TicTacToeFactory.empty_turn_less_game()
-assert unit_board_states_equal(emptyTurnLessGame.get_board_copy(), emptySimpleBoard)
+assert unit_board_states_equal(emptyTurnLessGame.get_board_copy(), emptyUnitBoard)
 
 print(" + empty_turn_less_game() method passed") 
 

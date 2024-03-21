@@ -25,7 +25,7 @@ class UltimateRuleBookBuilder():
     def build(self) -> UltimateRuleBook:
         return UltimateRuleBook(self.rules)
     
-def move_on_correct_simple_board(board: UltimateBoardState, move: UltimateMove, pastMove: UltimateMove) -> bool:
+def move_on_correct_unit_board(board: UltimateBoardState, move: UltimateMove, pastMove: UltimateMove) -> bool:
     if pastMove == None:
         return True
     correctRow = pastMove[1][0] == move[0][0]
@@ -33,5 +33,5 @@ def move_on_correct_simple_board(board: UltimateBoardState, move: UltimateMove, 
     return correctRow and correctColumn
 
 defaultUltimateRuleBook = UltimateRuleBookBuilder() \
-                    .add_rule(move_on_correct_simple_board).build()
+                    .add_rule(move_on_correct_unit_board).build()
 

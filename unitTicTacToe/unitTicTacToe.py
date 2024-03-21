@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from unitTicTacToe.ruleBook import RuleBook, defaultRuleBook
-from unitTicTacToe.simpleTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
+from unitTicTacToe.unitTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
 
 # TicTacToe interface
 class TicTacToe:

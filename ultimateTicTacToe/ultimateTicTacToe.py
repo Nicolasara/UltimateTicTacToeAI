@@ -1,8 +1,8 @@
 from abc import abstractmethod
-from unitTicTacToe.simpleTicTacToeTypes import PlayerType, Result, TicTacToe, TurnLessTicTacToe, CellState
-from unitTicTacToe.ruleBook import defaultRuleBook as defaultSimpleRuleBook
+from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, TicTacToe, TurnLessTicTacToe, CellState
+from unitTicTacToe.ruleBook import defaultRuleBook as defaultUnitRuleBook
 from ultimateTicTacToe.ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
-from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, SimpleGames
+from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, UnitGames
 
 # UltimateTicTacToe interface
 class UltimateTicTacToe:
@@ -43,7 +43,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     """
     def __init__(self, board: UltimateBoardState, ruleBook: UltimateRuleBook):
         super().__init__()  
-        self.simpleGames = ultimate_board_state_to_simple_games(board)
+        self.unitGames = ultimate_board_state_to_unit_games(board)
         self.ruleBook = ruleBook
         self.turn = PlayerType.X
         self.pastMove = None
@@ -60,9 +60,9 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     def make_move(self, move: UltimateMove):
         if (self.ruleBook.is_valid(self.get_board_copy(), move, self.pastMove)):
             ultimateMove = move[0]
-            simpleMove = move[1]
-            simpleGame = self.simpleGames[ultimateMove[0]][ultimateMove[1]]
-            simpleGame.make_move(simpleMove, self.turn)
+            unitMove = move[1]
+            unitGame = self.unitGames[ultimateMove[0]][ultimateMove[1]]
+            unitGame.make_move(unitMove, self.turn)
             self.rotate_turn()
         else:
             raise Exception("Invalid move.")
@@ -71,8 +71,8 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         possibleMoves = []
         for row in range(3):
             for column in range(3):
-                simpleGame = self.simpleGames[row][column]
-                for move in simpleGame.possible_moves():
+                unitGame = self.unitGames[row][column]
+                for move in unitGame.possible_moves():
                     possibleMoves.append(((row, column), move))
         return possibleMoves
     
@@ -115,13 +115,13 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
             return Result.DRAW
     
     def get_ultimate_board_row_copy(self, row: int) -> list[TicTacToe]:
-        return [game.get_board_copy() for game in self.simpleGames[row]]
+        return [game.get_board_copy() for game in self.unitGames[row]]
     
     def rotate_turn(self):
         self.turn = PlayerType.X if self.turn == PlayerType.O else PlayerType.O
 
     def is_board_full(self) -> bool:
-        for row in self.simpleGames:
+        for row in self.unitGames:
             for game in row:
                 if not game.is_board_full():
                     return False
@@ -144,24 +144,24 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         ]
     
     def get_column(self, column: int) -> list[TicTacToe]:
-        return [self.simpleGames[0][column], self.simpleGames[1][column], self.simpleGames[2][column]]
+        return [self.unitGames[0][column], self.unitGames[1][column], self.unitGames[2][column]]
     
     def get_row(self, row: int) -> list[TicTacToe]:
-        return self.simpleGames[row]
+        return self.unitGames[row]
     
     def get_diagonal(self, diagonal: int) -> list[TicTacToe]:
-        """Gets the diagonal simpleTicTacToe games of the ultimate board.
+        """Gets the diagonal unitTicTacToe games of the ultimate board.
 
         Args:
             diagonal (int): The diagonal to get. 1 for the top-left to bottom-right diagonal, 2 for the top-right to bottom-left diagonal.
 
         Returns:
-            list[TicTacToe]: The diagonal of simple games of the ultimate board.
+            list[TicTacToe]: The diagonal of unit games of the ultimate board.
         """
         if diagonal == 1:
-            return [self.simpleGames[0][0], self.simpleGames[1][1], self.simpleGames[2][2]]
+            return [self.unitGames[0][0], self.unitGames[1][1], self.unitGames[2][2]]
         else:
-            return [self.simpleGames[0][2], self.simpleGames[1][1], self.simpleGames[2][0]]
+            return [self.unitGames[0][2], self.unitGames[1][1], self.unitGames[2][0]]
     
     def is_three_in_a_row(self, games: list[TicTacToe]) -> bool:
         return games[0].winner() == games[1].winner() == games[2].winner() and games[0].winner() != None
@@ -172,7 +172,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
 
         #for each row of tic tac toe boards
         for r in range(3):
-            gameRow = self.simpleGames[r]       
+            gameRow = self.unitGames[r]       
 
             #get boards as lists of rows
             b1 = gameRow[0].toString().split("\n")
@@ -189,14 +189,14 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
                 boardString += "===========||===========||===========\n"
         return boardString
 
-def ultimate_board_state_to_simple_games(board: UltimateBoardState) -> SimpleGames:
-    simpleGames: SimpleGames = []
+def ultimate_board_state_to_unit_games(board: UltimateBoardState) -> UnitGames:
+    unitGames: UnitGames = []
     for row in board:
         gamesRow: list[TicTacToe] = []
-        for simpleBoard in row:
-            gamesRow.append(TurnLessTicTacToe(simpleBoard, defaultSimpleRuleBook))
-        simpleGames.append(gamesRow)
-    return simpleGames
+        for unitBoard in row:
+            gamesRow.append(TurnLessTicTacToe(unitBoard, defaultUnitRuleBook))
+        unitGames.append(gamesRow)
+    return unitGames
 
 class UltimateTicTacToeFactory:
     @staticmethod
