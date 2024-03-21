@@ -38,16 +38,16 @@ def playAManualGame(AIplayerX):
                 print("Enter your move: ")
                 
                 #expect entry to be: Y X y x
-                input = input().split(" ")
+                move_input = input().split(" ")
                 
                 #convert move to two tuples
-                move = ((int(input[0]), int(input[1])), (int(input[2]), int(input[3])))
+                move = ((int(move_input[0]), int(move_input[1])), (int(move_input[2]), int(move_input[3])))
 
                 #check if move is valid
-                while not game.is_valid_move(move):
+                while move not in game.possible_moves():
                     print("Invalid move. Try again: ")
-                    input = input().split(" ")
-                    move = ((int(input[0]), int(input[1])), (int(input[2]), int(input[3])))
+                    move_input = input().split(" ")
+                    move = ((int(move_input[0]), int(move_input[1])), (int(move_input[2]), int(move_input[3])))
         print(game.get_turn().value + " moves: " + str(move) + "\n")    
         game.make_move(move)
         print(game.toString())
