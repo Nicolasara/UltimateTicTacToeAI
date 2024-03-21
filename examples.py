@@ -1,4 +1,4 @@
-from simpleTicTacToeTypes import CellState
+from unitTicTacToe.simpleTicTacToeTypes import CellState
 
 ### Example of a empty board
 emptySimpleBoard = [

@@ -1,4 +1,4 @@
-from ruleBook import defaultRuleBook, move_on_empty_cell, move_in_bounds, game_has_not_been_won
+from unitTicTacToe.ruleBook import defaultRuleBook, move_on_empty_cell, move_in_bounds, game_has_not_been_won
 from examples import emptySimpleBoard, tiedSimpleBoard, wonSimpleBoard, ticTacToeBoard1
 
 ### Rule Tests

@@ -1,6 +1,6 @@
-from ruleBook import defaultRuleBook, move_on_empty_cell, move_in_bounds, game_has_not_been_won
-from simpleTicTacToe import TicTacToe, TurnLessTicTacToe, TicTacToeFactory
-from simpleTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
+from unitTicTacToe.ruleBook import defaultRuleBook, move_on_empty_cell, move_in_bounds, game_has_not_been_won
+from unitTicTacToe.simpleTicTacToe import TicTacToe, TurnLessTicTacToe, TicTacToeFactory
+from unitTicTacToe.simpleTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
 from examples import emptySimpleBoard, tiedSimpleBoard, wonSimpleBoard, ticTacToeBoard1
 
 print("Testing Unit Tic Tac Toe Factory")

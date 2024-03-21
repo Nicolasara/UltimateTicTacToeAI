@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Callable
-from ultimateTicTacToeTypes import UltimateBoardState, UltimateMove
+from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove
 
 Rule = Callable[[UltimateBoardState, UltimateMove, UltimateMove], bool]
 

@@ -1,4 +1,4 @@
-from ultimateTicTacToe import UltimateTicTacToe, UltimateTicTacToeFactory
+from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe, UltimateTicTacToeFactory
 from simpleTicTacToe import PlayerType
 
 # play a game between two AI players and return the winner

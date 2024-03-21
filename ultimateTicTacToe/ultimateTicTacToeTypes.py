@@ -1,5 +1,5 @@
-from simpleTicTacToeTypes import BoardState, Move
-from simpleTicTacToe import TicTacToe
+from unitTicTacToe.simpleTicTacToeTypes import BoardState, Move
+from unitTicTacToe.simpleTicTacToe import TicTacToe
 
 UltimateBoardState = list[list[BoardState]]
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Callable
-from simpleTicTacToeTypes import BoardState, Move, CellState
+from unitTicTacToe.simpleTicTacToeTypes import BoardState, Move, CellState
 
 # A Rule is a function that takes a BoardState and a Move and returns a boolean, where True means the move is valid and False means the move is invalid.
 Rule = Callable[[BoardState, Move], bool]

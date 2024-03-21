@@ -1,8 +1,8 @@
 from abc import abstractmethod
-from simpleTicTacToe import PlayerType, Result, TicTacToe, TurnLessTicTacToe
-from ruleBook import defaultRuleBook as defaultSimpleRuleBook
-from ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
-from ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, SimpleGames
+from unitTicTacToe.simpleTicTacToeTypes import PlayerType, Result, TicTacToe, TurnLessTicTacToe, CellState
+from unitTicTacToe.ruleBook import defaultRuleBook as defaultSimpleRuleBook
+from ultimateTicTacToe.ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
+from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, SimpleGames
 
 # UltimateTicTacToe interface
 class UltimateTicTacToe:
