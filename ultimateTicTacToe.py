@@ -1,7 +1,7 @@
 from abc import abstractmethod
-from simpleTicTacToe import PlayerType, BoardState, Move, Result, TicTacToe
+from simpleTicTacToe import PlayerType, Result, TicTacToe, TurnLessTicTacToe
 from ruleBook import defaultRuleBook as defaultSimpleRuleBook
-from ultimateRuleBook import UltimateRuleBook
+from ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
 from ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, SimpleGames
 
 # UltimateTicTacToe interface
@@ -115,7 +115,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
             return Result.DRAW
     
     def get_ultimate_board_row_copy(self, row: int) -> list[TicTacToe]:
-        return [game.get_ultimate_board_row_copy() for game in self.simpleGames[row]]
+        return [game.get_board_copy() for game in self.simpleGames[row]]
     
     def rotate_turn(self):
         self.turn = PlayerType.X if self.turn == PlayerType.O else PlayerType.O
@@ -194,6 +194,15 @@ def ultimate_board_state_to_simple_games(board: UltimateBoardState) -> SimpleGam
     for row in board:
         gamesRow: list[TicTacToe] = []
         for simpleBoard in row:
-            gamesRow.append(TicTacToe(simpleBoard, defaultSimpleRuleBook))
+            gamesRow.append(TurnLessTicTacToe(simpleBoard, defaultSimpleRuleBook))
         simpleGames.append(gamesRow)
     return simpleGames
+
+class UltimateTicTacToeFactory:
+    @staticmethod
+    def emptyTurnLessGame() -> UltimateTicTacToe:
+        emptyBoard = [[[['' for _ in range(3)] for _ in range(3)] for _ in range(3)] for _ in range(3)]
+        print("emptyBoard: ", emptyBoard)
+        return StrictUltimateTicTacToe(emptyBoard, defaultUltimateRuleBook)
+    
+game = UltimateTicTacToeFactory.emptyTurnLessGame()
