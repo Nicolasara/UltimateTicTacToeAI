@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from ruleBook import RuleBook
+from ruleBook import RuleBook, defaultRuleBook
 from simpleTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
 
 # TicTacToe interface
@@ -71,6 +71,9 @@ class TicTacToe:
         Returns:
             Result | None: Returns the result of the game if there is one, otherwise returns None.
         """
+        pass
+
+    def toString(self) -> str:
         pass
 
 class TurnLessTicTacToe(TicTacToe):
@@ -164,7 +167,7 @@ class TurnLessTicTacToe(TicTacToe):
     def is_board_full(self) -> bool:
         for row in self.board:
             for cell in row:
-                if cell == CellState.EMPTY:
+                if cell == CellState.EMPTY.value:
                     return False
         return True
 
@@ -191,6 +194,36 @@ class TurnLessTicTacToe(TicTacToe):
     def is_three_in_a_row(self, cells: list[CellState]) -> bool:
         return cells[0] == cells[1] == cells[2] and cells[0] != ''
     
+    def toString(self) -> str:
+        boardString = ""
+
+        #if there is winner, print it surrounded by spaces
+        if self.is_game_over():
+            winner = self.winner() if self.winner() != None else "-"
+            for t in range(5):
+                if t == 2:
+                    boardString += " " * 5 + winner.value + " " * 5 + "\n"
+                else:
+                    boardString += " " * 11 + "\n"
+            return boardString
+        
+        #else, print each row
+        for r in range(3):
+            row = self.board[r]
+            #print each column in the row
+            for c in range(3):
+                col = row[c]
+                if col == '':
+                    col = " "
+                boardString += " " + col + " "
+                #divider
+                if c != 2:
+                    boardString += "|"
+            #horizontal divider
+            if r != 2:
+                boardString += "\n---|---|---\n"
+        return boardString 
+    
 
 # class lenientTicTacToe(TicTacToe):
 #     """A lenient implementation of the TicTacToe interface which does not enforce the rules of the game.
@@ -210,4 +243,4 @@ class TicTacToeFactory:
             ['', '', ''],
             ['', '', '']
         ]
-        return TurnLessTicTacToe(emptyBoard)
+        return TurnLessTicTacToe(emptyBoard, defaultRuleBook)

@@ -27,7 +27,7 @@ class RuleBookBuilder():
         return RuleBook(self.rules)
     
 def move_on_empty_cell(board: BoardState, move: Move) -> bool:
-    return board[move[0]][move[1]] == CellState.EMPTY
+    return board[move[0]][move[1]] == CellState.EMPTY.value
 
 def move_in_bounds(_: BoardState, move: Move) -> bool:
     return 0 <= move[0] < 3 and 0 <= move[1] < 3
@@ -47,7 +47,7 @@ def game_has_not_been_won(board: BoardState, _: Move) -> bool:
         row1, row2, row3,
         diagonal1, diagonal2
     ]
-    gameWon = any([cells[0] == cells[1] == cells[2] and cells[0] != CellState.EMPTY for cells in threesInARow])
+    gameWon = any([cells[0] == cells[1] == cells[2] and cells[0] != CellState.EMPTY.value for cells in threesInARow])
     return not gameWon
 
 defaultRuleBook = RuleBookBuilder() \

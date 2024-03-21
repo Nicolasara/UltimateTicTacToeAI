@@ -1,7 +1,7 @@
 from abc import abstractmethod
-from simpleTicTacToe import PlayerType, BoardState, Move, Result, TicTacToe
+from simpleTicTacToe import PlayerType, Result, TicTacToe, TurnLessTicTacToe
 from ruleBook import defaultRuleBook as defaultSimpleRuleBook
-from ultimateRuleBook import UltimateRuleBook
+from ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
 from ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, SimpleGames
 
 # UltimateTicTacToe interface
@@ -26,10 +26,13 @@ class UltimateTicTacToe:
         pass
     
     @abstractmethod
-    def is_game_over() -> bool:
+    def is_game_over(self) -> bool:
+        pass
+
+    def toString() -> str:
         pass
     
-    def winner() -> PlayerType | None:
+    def winner(self) -> PlayerType | None:
         pass
   
     def result() -> Result | None:
@@ -112,7 +115,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
             return Result.DRAW
     
     def get_ultimate_board_row_copy(self, row: int) -> list[TicTacToe]:
-        return [game.get_ultimate_board_row_copy() for game in self.simpleGames[row]]
+        return [game.get_board_copy() for game in self.simpleGames[row]]
     
     def rotate_turn(self):
         self.turn = PlayerType.X if self.turn == PlayerType.O else PlayerType.O
@@ -163,12 +166,42 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     def is_three_in_a_row(self, games: list[TicTacToe]) -> bool:
         return games[0].winner() == games[1].winner() == games[2].winner() and games[0].winner() != None
 
+    def toString(self) -> str:
+        #initialize board string
+        boardString = ""
+
+        #for each row of tic tac toe boards
+        for r in range(3):
+            gameRow = self.simpleGames[r]       
+
+            #get boards as lists of rows
+            b1 = gameRow[0].toString().split("\n")
+            b2 = gameRow[1].toString().split("\n")
+            b3 = gameRow[2].toString().split("\n")
+
+            #combine rows of each smaller board into full-width rows
+            row = ['||'.join(item) for item in zip(b1, b2, b3)]
+            for l in row:
+                boardString += l + "\n"
+
+            #if not the last row, add vertical divider
+            if r != 2:
+                boardString += "===========||===========||===========\n"
+        return boardString
+
 def ultimate_board_state_to_simple_games(board: UltimateBoardState) -> SimpleGames:
     simpleGames: SimpleGames = []
     for row in board:
         gamesRow: list[TicTacToe] = []
         for simpleBoard in row:
-            gamesRow.append(TicTacToe(simpleBoard, defaultSimpleRuleBook))
+            gamesRow.append(TurnLessTicTacToe(simpleBoard, defaultSimpleRuleBook))
         simpleGames.append(gamesRow)
     return simpleGames
+
+class UltimateTicTacToeFactory:
+    @staticmethod
+    def emptyTurnLessGame() -> UltimateTicTacToe:
+        emptyBoard = [[[['' for _ in range(3)] for _ in range(3)] for _ in range(3)] for _ in range(3)]
+        return StrictUltimateTicTacToe(emptyBoard, defaultUltimateRuleBook)
     
+game = UltimateTicTacToeFactory.emptyTurnLessGame()
