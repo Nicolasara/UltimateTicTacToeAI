@@ -21,7 +21,7 @@ def playAGame(playerX, playerO, print_game = False):
             print(game.toString())
     winner = game.winner() if game.winner() != None else "Tie"
     if print_game:
-        print("Game over. Winner: " + winner + "\n")
+        print("Game over. Winner: " + winner.value + "\n")
     return winner
 
 # play a game between an AI player and a manual player
@@ -52,7 +52,7 @@ def playAManualGame(AIplayerX):
         game.make_move(move)
         print(game.toString())
     winner = game.winner() if game.winner() != None else "Tie"
-    print("Game over. Winner: " + winner + "\n")
+    print("Game over. Winner: " + winner.value + "\n")
     return winner
 
 # play a set of games between two AI and return the number of wins for each player
