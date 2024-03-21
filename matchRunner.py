@@ -1,57 +1,59 @@
-from ultimateTicTacToe import UltimateTicTacToe
-from player import TwoDimensionalMove
+from ultimateTicTacToe import UltimateTicTacToe, UltimateTicTacToeFactory
+from simpleTicTacToe import PlayerType
 
 # play a game between two AI players and return the winner
 def playAGame(playerX, playerO, print_game = False):
     # new board state 
-    game = UltimateTicTacToe()
-    while not game.is_gameOver():
+    game = UltimateTicTacToeFactory.emptyTurnLessGame()
+    while not game.is_game_over():
         move = None
-        match game.get_turn:
+        match game.get_turn():
             # p1
-            case 'X':
+            case PlayerType.X:
                 move = playerX(game)
             # p2
-            case 'O':
+            case PlayerType.O:
                 move = playerO(game)
+        #assumes that the move is valid!
         game.make_move(move)
         if print_game:
             print(game.get_turn() + " moves: " + str(move) + "\n")
             print(game.toString())
+    winner = game.winner() if game.winner() != None else "Tie"
     if print_game:
-        print("Game over. Winner: " + game.winner + "\n")
-    return game.winner
+        print("Game over. Winner: " + winner + "\n")
+    return winner
 
 # play a game between an AI player and a manual player
 def playAManualGame(AIplayerX):
-    game = UltimateTicTacToe()
-    while not game.is_gameOver():
+    game = UltimateTicTacToeFactory.emptyTurnLessGame()
+    while not game.is_game_over():
         move = None
-        match game.get_turn:
+        match game.get_turn():
             # p1
-            case 'X':
+            case PlayerType.X:
                 move = AIplayerX(game)
             # p2
-            case 'O':
+            case PlayerType.O:
                 print("Enter your move: ")
                 
                 #expect entry to be: Y X y x
                 input = input().split(" ")
                 
-                #convert move to TwoDimensionalMove
-                move = TwoDimensionalMove(int(input[0]), int(input[1]), int(input[2]), int(input[3]))
+                #convert move to two tuples
+                move = ((int(input[0]), int(input[1])), (int(input[2]), int(input[3])))
 
                 #check if move is valid
                 while not game.is_valid_move(move):
                     print("Invalid move. Try again: ")
                     input = input().split(" ")
-                    move = TwoDimensionalMove(int(input[0]), int(input[1]), int(input[2]), int(input[3]))
-
+                    move = ((int(input[0]), int(input[1])), (int(input[2]), int(input[3])))
+        print(game.get_turn().value + " moves: " + str(move) + "\n")    
         game.make_move(move)
-        print(game.get_turn() + " moves: " + str(move) + "\n")
         print(game.toString())
-    print("Game over. Winner: " + game.winner + "\n")
-    return game.winner
+    winner = game.winner() if game.winner() != None else "Tie"
+    print("Game over. Winner: " + winner + "\n")
+    return winner
 
 # play a set of games between two AI and return the number of wins for each player
 def playManyGames(playerX, playerO, num_games):
@@ -66,7 +68,7 @@ def playManyGames(playerX, playerO, num_games):
     return (playerX_wins, playerO_wins)
 
 #example of a player
-player1 = lambda game: game.get_valid_moves()[0]
+player1 = lambda game: game.possible_moves()[0]
 
 #play a game
 playAManualGame(player1)

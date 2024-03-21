@@ -26,13 +26,13 @@ class UltimateTicTacToe:
         pass
     
     @abstractmethod
-    def is_game_over() -> bool:
+    def is_game_over(self) -> bool:
         pass
 
     def toString() -> str:
         pass
     
-    def winner() -> PlayerType | None:
+    def winner(self) -> PlayerType | None:
         pass
   
     def result() -> Result | None:
@@ -202,7 +202,6 @@ class UltimateTicTacToeFactory:
     @staticmethod
     def emptyTurnLessGame() -> UltimateTicTacToe:
         emptyBoard = [[[['' for _ in range(3)] for _ in range(3)] for _ in range(3)] for _ in range(3)]
-        print("emptyBoard: ", emptyBoard)
         return StrictUltimateTicTacToe(emptyBoard, defaultUltimateRuleBook)
     
 game = UltimateTicTacToeFactory.emptyTurnLessGame()
