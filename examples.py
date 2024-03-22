@@ -123,3 +123,9 @@ ultimateTicTacToeBoard = [
     [ticTacToeBoard4, ticTacToeBoard5, ticTacToeBoard6],
     [ticTacToeBoard7, ticTacToeBoard8, ticTacToeBoard9]
 ]   
+
+oneUnitBoardWonUltimateTicTacToeBoard = [
+    [wonUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard]
+]

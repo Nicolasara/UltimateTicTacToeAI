@@ -1,5 +1,6 @@
 from abc import abstractmethod
 from unitTicTacToe.ruleBook import RuleBook, defaultRuleBook
+from unitTicTacToe.boardStateUtils import get_threes_in_a_row, is_wining_three_in_a_row
 from unitTicTacToe.unitTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
 
 # TicTacToe interface
@@ -121,9 +122,9 @@ class TurnLessTicTacToe(TicTacToe):
     def winner(self) -> PlayerType | None:
         xThreesInARow = 0
         oThreesInARow = 0
-        threesInARow = self.get_threes_in_a_row()
+        threesInARow = get_threes_in_a_row(self.get_board_copy())
         for cells in threesInARow:
-            if self.is_three_in_a_row(cells):
+            if is_wining_three_in_a_row(cells):
                 if cells[0] == CellState.X:
                     xThreesInARow += 1
                 else:
@@ -148,21 +149,7 @@ class TurnLessTicTacToe(TicTacToe):
         else:
             return Result.DRAW
 
-    def get_threes_in_a_row(self) -> list[list[CellState]]:
-        column1 = self.get_column(0)
-        column2 = self.get_column(1)
-        column3 = self.get_column(2)
-        row1 = self.get_row(0)
-        row2 = self.get_row(1)
-        row3 = self.get_row(2)
-        diagonal1 = self.get_diagonal(1)
-        diagonal2 = self.get_diagonal(2)
 
-        return [
-            column1, column2, column3,
-            row1, row2, row3,
-            diagonal1, diagonal2
-        ]
         
     def is_board_full(self) -> bool:
         for row in self.board:
@@ -170,29 +157,7 @@ class TurnLessTicTacToe(TicTacToe):
                 if cell == CellState.EMPTY:
                     return False
         return True
-
-    def get_column(self, column: int) -> list[CellState]:
-        return [self.board[0][column], self.board[1][column], self.board[2][column]]
     
-    def get_row(self, row: int) -> list[CellState]:
-        return self.board[row]
-    
-    def get_diagonal(self, diagonal: int) -> list[CellState]:
-        """Gets the diagonal of the board.
-
-        Args:
-            diagonal (int): The diagonal to get. 1 for the top-left to bottom-right diagonal, 2 for the top-right to bottom-left diagonal.
-
-        Returns:
-            list[CellState]: The diagonal of the board.
-        """
-        if diagonal == 1:
-            return [self.board[0][0], self.board[1][1], self.board[2][2]]
-        else:
-            return [self.board[0][2], self.board[1][1], self.board[2][0]]
-    
-    def is_three_in_a_row(self, cells: list[CellState]) -> bool:
-        return cells[0] == cells[1] == cells[2] and cells[0] != CellState.EMPTY
     
     def toString(self) -> str:
         boardString = ""
@@ -215,6 +180,8 @@ class TurnLessTicTacToe(TicTacToe):
                 col = row[c]
                 if col == CellState.EMPTY:
                     col = " "
+                else:
+                    col = col.value
                 boardString += " " + col + " "
                 #divider
                 if c != 2:

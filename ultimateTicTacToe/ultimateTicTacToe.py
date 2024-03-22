@@ -2,6 +2,7 @@ from abc import abstractmethod
 from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, CellState
 from unitTicTacToe.unitTicTacToe import TicTacToe, TurnLessTicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as defaultUnitRuleBook
+from ultimateTicTacToe.UnitGamesUtils import get_threes_in_a_row, is_wining_three_in_a_row
 from ultimateTicTacToe.ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, UnitGames
 
@@ -93,9 +94,9 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     def winner(self) -> PlayerType | None:
         xThreesInARow = 0
         oThreesInARow = 0
-        threesInARow = self.get_threes_in_a_row()
+        threesInARow = get_threes_in_a_row()
         for games in threesInARow:
-            if self.is_three_in_a_row(games):
+            if is_wining_three_in_a_row(games):
                 if games[0].winner() == 'X':
                     xThreesInARow += 1
                 else:
@@ -132,45 +133,6 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
                 if not game.is_board_full():
                     return False
         return True
-    
-    def get_threes_in_a_row(self) -> list[list[TicTacToe]]:
-        column1 = self.get_column(0)
-        column2 = self.get_column(1)
-        column3 = self.get_column(2)
-        row1 = self.get_row(0)
-        row2 = self.get_row(1)
-        row3 = self.get_row(2)
-        diagonal1 = self.get_diagonal(1)
-        diagonal2 = self.get_diagonal(2)
-
-        return [
-            column1, column2, column3,
-            row1, row2, row3,
-            diagonal1, diagonal2
-        ]
-    
-    def get_column(self, column: int) -> list[TicTacToe]:
-        return [self.unitGames[0][column], self.unitGames[1][column], self.unitGames[2][column]]
-    
-    def get_row(self, row: int) -> list[TicTacToe]:
-        return self.unitGames[row]
-    
-    def get_diagonal(self, diagonal: int) -> list[TicTacToe]:
-        """Gets the diagonal unitTicTacToe games of the ultimate board.
-
-        Args:
-            diagonal (int): The diagonal to get. 1 for the top-left to bottom-right diagonal, 2 for the top-right to bottom-left diagonal.
-
-        Returns:
-            list[TicTacToe]: The diagonal of unit games of the ultimate board.
-        """
-        if diagonal == 1:
-            return [self.unitGames[0][0], self.unitGames[1][1], self.unitGames[2][2]]
-        else:
-            return [self.unitGames[0][2], self.unitGames[1][1], self.unitGames[2][0]]
-    
-    def is_three_in_a_row(self, games: list[TicTacToe]) -> bool:
-        return games[0].winner() == games[1].winner() == games[2].winner() and games[0].winner() != None
 
     def toString(self) -> str:
         #initialize board string

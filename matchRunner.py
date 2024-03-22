@@ -1,10 +1,10 @@
 from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe, UltimateTicTacToeFactory
-from unitTicTacToe import PlayerType
+from unitTicTacToe.unitTicTacToeTypes import PlayerType
 
 # play a game between two AI players and return the winner
 def playAGame(playerX, playerO, print_game = False):
     # new board state 
-    game = UltimateTicTacToeFactory.emptyTurnLessGame()
+    game = UltimateTicTacToeFactory.emptyStrictGame()
     while not game.is_game_over():
         move = None
         match game.get_turn():
@@ -26,7 +26,7 @@ def playAGame(playerX, playerO, print_game = False):
 
 # play a game between an AI player and a manual player
 def playAManualGame(AIplayerX):
-    game = UltimateTicTacToeFactory.emptyTurnLessGame()
+    game = UltimateTicTacToeFactory.emptyStrictGame()
     while not game.is_game_over():
         move = None
         match game.get_turn():

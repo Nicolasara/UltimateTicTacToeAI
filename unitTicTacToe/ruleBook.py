@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Callable
+from unitTicTacToe.boardStateUtils import has_board_been_won
 from unitTicTacToe.unitTicTacToeTypes import BoardState, Move, CellState
 
 # A Rule is a function that takes a BoardState and a Move and returns a boolean, where True means the move is valid and False means the move is invalid.
@@ -36,29 +37,7 @@ def move_in_bounds(_: BoardState, move: Move) -> bool:
     return 0 <= move[0] < 3 and 0 <= move[1] < 3
 
 def game_has_not_been_won(board: BoardState, _: Move) -> bool:
-    try:
-        column1 = [board[0][0], board[1][0], board[2][0]]
-        column2 = [board[0][1], board[1][1], board[2][1]]
-        column3 = [board[0][2], board[1][2], board[2][2]]
-        row1 = board[0]
-        row2 = board[1]
-        row3 = board[2]
-        diagonal1 = [board[0][0], board[1][1], board[2][2]]
-        diagonal2 = [board[0][2], board[1][1], board[2][0]]
-    except IndexError:
-        return False
-
-    threesInARow = [
-        column1, column2, column3,
-        row1, row2, row3,
-        diagonal1, diagonal2
-    ]
-
-    try:
-        gameWon = any([cells[0] == cells[1] == cells[2] and cells[0] != CellState.EMPTY for cells in threesInARow])
-    except IndexError:
-        return False
-    
+    gameWon = has_board_been_won(board)
     return not gameWon
 
 defaultRuleBook = RuleBookBuilder() \
