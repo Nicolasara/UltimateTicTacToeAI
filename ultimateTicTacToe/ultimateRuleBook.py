@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Callable
+from unitTicTacToe.ruleBook import defaultRuleBook as unitRuleBook
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove
 
 Rule = Callable[[UltimateBoardState, UltimateMove, UltimateMove], bool]
@@ -32,6 +33,12 @@ def move_on_correct_unit_board(board: UltimateBoardState, move: UltimateMove, pa
     correctColumn = pastMove[1][1] == move[0][1]
     return correctRow and correctColumn
 
+def move_follows_default_unit_rules(ultimateBoardState: UltimateBoardState, move: UltimateMove, pastMove: UltimateMove) -> bool:
+    unitBoard = ultimateBoardState[move[0][0]][move[0][1]]
+    unitMove = move[1]
+    return unitRuleBook.is_valid(unitBoard, unitMove)
+
 defaultUltimateRuleBook = UltimateRuleBookBuilder() \
-                    .add_rule(move_on_correct_unit_board).build()
+                    .add_rule(move_on_correct_unit_board) \
+                    .add_rule(move_follows_default_unit_rules).build()
 
