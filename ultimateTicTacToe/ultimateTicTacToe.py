@@ -94,7 +94,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     def winner(self) -> PlayerType | None:
         xThreesInARow = 0
         oThreesInARow = 0
-        threesInARow = get_threes_in_a_row()
+        threesInARow = get_threes_in_a_row(self.unitGames)
         for games in threesInARow:
             if is_wining_three_in_a_row(games):
                 if games[0].winner() == 'X':

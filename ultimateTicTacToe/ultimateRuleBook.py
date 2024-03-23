@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import Callable, Optional
+from unitTicTacToe.unitTicTacToe import TicTacToeFactory, TicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as unitRuleBook
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove
 
@@ -29,6 +30,12 @@ class UltimateRuleBookBuilder():
 def move_on_correct_unit_board(board: UltimateBoardState, move: UltimateMove, pastMove: UltimateMove = None) -> bool:
     if pastMove == None:
         return True
+    
+    unitBoard = board[pastMove[1][0]][pastMove[1][1]]
+    unitGame = TicTacToeFactory.turn_less_game_from_board(unitBoard)
+    if unitGame.is_game_over():
+        return True
+    
     correctRow = pastMove[1][0] == move[0][0]
     correctColumn = pastMove[1][1] == move[0][1]
     return correctRow and correctColumn

@@ -21,15 +21,15 @@ def get_diagonal(unitGames: UnitGames, diagonal: int) -> list[TicTacToe]:
     else:
         return [unitGames[0][2], unitGames[1][1], unitGames[2][0]]
 
-def get_threes_in_a_row() -> list[list[TicTacToe]]:
-    column1 = get_column(0)
-    column2 = get_column(1)
-    column3 = get_column(2)
-    row1 = get_row(0)
-    row2 = get_row(1)
-    row3 = get_row(2)
-    diagonal1 = get_diagonal(1)
-    diagonal2 = get_diagonal(2)
+def get_threes_in_a_row(unitGames: UnitGames) -> list[list[TicTacToe]]:
+    column1 = get_column(unitGames, 0)
+    column2 = get_column(unitGames, 1)
+    column3 = get_column(unitGames, 2)
+    row1 = get_row(unitGames, 0)
+    row2 = get_row(unitGames, 1)
+    row3 = get_row(unitGames, 2)
+    diagonal1 = get_diagonal(unitGames, 1)
+    diagonal2 = get_diagonal(unitGames, 2)
 
     return [
         column1, column2, column3,

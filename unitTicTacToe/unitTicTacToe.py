@@ -98,7 +98,11 @@ class TurnLessTicTacToe(TicTacToe):
     
     def make_move(self, move: Move, player: PlayerType):
         if (self.ruleBook.is_valid(self.get_board_copy(), move)):
-            self.board[move[0]][move[1]] = player
+            if (player == PlayerType.X):
+                cellState = CellState.X
+            else:   
+                cellState = CellState.O
+            self.board[move[0]][move[1]] = cellState
         else:
             raise Exception("Invalid move.")
 
@@ -165,6 +169,8 @@ class TurnLessTicTacToe(TicTacToe):
         #if there is winner, print it surrounded by spaces
         if self.is_game_over():
             winner = self.winner() if self.winner() != None else "-"
+            print(winner)
+            print(self.get_board_copy())
             for t in range(5):
                 if t == 2:
                     boardString += " " * 5 + winner.value + " " * 5 + "\n"
@@ -211,3 +217,7 @@ class TicTacToeFactory:
             [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
         ]
         return TurnLessTicTacToe(emptyBoard, defaultRuleBook)
+    
+    @staticmethod
+    def turn_less_game_from_board(board: BoardState) -> TicTacToe:
+        return TurnLessTicTacToe(board, defaultRuleBook)
