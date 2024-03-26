@@ -203,8 +203,11 @@ class TurnLessTicTacToe(TicTacToe):
             for t in range(5):
                 if t == 2:
                     boardString += " " * 5 + winner.value + " " * 5 + "\n"
+                elif t == 4:
+                    boardString += " " * 11
                 else:
                     boardString += " " * 11 + "\n"
+            print("boardString: \n", boardString, "\nend boardString")
             return boardString
         
         #else, print each row
