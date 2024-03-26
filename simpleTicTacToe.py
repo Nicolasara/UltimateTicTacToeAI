@@ -207,7 +207,6 @@ class TurnLessTicTacToe(TicTacToe):
                     boardString += " " * 11
                 else:
                     boardString += " " * 11 + "\n"
-            print("boardString: \n", boardString, "\nend boardString")
             return boardString
         
         #else, print each row
