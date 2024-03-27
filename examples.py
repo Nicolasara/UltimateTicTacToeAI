@@ -21,6 +21,13 @@ wonUnitBoard = [
     [CellState.X, CellState.EMPTY, CellState.EMPTY]
 ]
 
+### Example of a lost game
+lostUnitBoard = [
+    [CellState.O, CellState.O, CellState.X],
+    [CellState.O, CellState.X, CellState.O],
+    [CellState.O, CellState.X, CellState.O]
+]
+
 emptyUnitBoard1 = [
     [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
     [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
@@ -129,3 +136,16 @@ oneUnitBoardWonUltimateTicTacToeBoard = [
     [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard],
     [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard]
 ]
+
+gameWonUltimateTicTacToeBoard = [
+    [wonUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, wonUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, wonUnitBoard]
+]
+
+gameWithThreeWinOptions = [
+    [wonUnitBoard, emptyUnitBoard, wonUnitBoard],
+    [emptyUnitBoard, wonUnitBoard, lostUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, lostUnitBoard]
+]
+
