@@ -1,15 +1,6 @@
 from typing import NamedTuple
-
-    # playAGame takes in two players
-# each player is type (UltimateTicTacToe) -> Move
-# map of heuristic to weight
-def player(game_board, heuristics):
-    # pick move based on heuristic
-    # check valid move 
-    chosen_move = nil
-    while chosen_move not in possibleMoves:
-        pass
-pass
+from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe
+from minimax import minimax
 
 class Move(NamedTuple):
     row: int
@@ -23,12 +14,15 @@ class TwoDimensionalMove(NamedTuple):
     
 
 class Player:
-    # heuristic_map is a dictionary of heuristic functions and weights
-    # heuristic functions return a number
-    def __init__(self, heuristic_map) -> None:
-        self.heuristic_map = heuristic_map
+    def __init__(self, board_evaluator: BoardEvaluator) -> None:
+        self.evaluator = board_evaluator
     
-    # minimax
-    @abstractmethod
-    def get_move(self) -> TwoDimensionalMove:
-        pass
+    def best_move(self, game, depth=3) -> TwoDimensionalMove:
+        _, move = minimax(game, self.evaluator, depth, True, True)
+        return move
+    
+    def get_evaluator(self):
+        return self.evaluator
+    
+    def set_evaluator(self, evaluator):
+        self.evaluator = evaluator
