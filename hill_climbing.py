@@ -1,4 +1,5 @@
 import random as rd
+import math
 
 
 def energy_function(weights, num_games: int):
@@ -116,3 +117,44 @@ def hill_climbing_random_uphill(initial_weights, num_iterations: int, num_games:
 
     return best_solution
 
+
+def hill_climbing_annealing(initial_weights, num_iterations: int, num_games: int, T: float, decay: float):
+    """
+    Hill climbing utilizing simulated annealing
+
+    :param int[] initial_weights: an array of integer weights to start with
+    :param int num_iterations: number of hill climbing iterations
+    :param int num_games: number of UltimateTicTacToe games to run per hill climbing iteration
+    :param float T: initial temperature
+    :param float decay: decay rate to decrease temperature per iteration
+
+    :return (int[], int) The best found set of weights and its associated win rate
+    """
+
+    current_weights = initial_weights
+    current_win_rate = 0
+    best_weights = current_weights
+    best_win_rate = current_win_rate
+    curr_T = T
+
+    for _ in range(num_iterations):
+        adjusted_weights = [weight + rd.uniform(-1, 1) for weight in current_weights]
+        win_rate = energy_function(adjusted_weights, num_games)
+
+        if win_rate > best_win_rate:
+            best_weights = adjusted_weights
+            best_win_rate = win_rate
+            current_weights = adjusted_weights
+            current_win_rate = win_rate
+        elif win_rate > current_win_rate:
+            current_weights = adjusted_weights
+            current_win_rate = win_rate
+        elif rd.random() < (math.e)**((win_rate - current_win_rate)/curr_T):
+            current_weights = adjusted_weights
+            current_win_rate = win_rate
+
+        curr_T *= decay
+
+    best_solution = (best_weights, best_win_rate)
+
+    return best_solution
