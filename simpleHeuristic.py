@@ -1,29 +1,13 @@
 from typing import Callable
-from ultimateTicTacToeTypes import BoardState
+from simpleTicTacToeTypes import CellState, PlayerType
+from ultimateTicTacToe import ultimate_board_state_to_simple_games
+from ultimateTicTacToeTypes import BoardState, UltimateBoardState, UltimateMove
 
-Simple_Heuristic_Rule = Callable[[BoardState], str]
-
-class SimpleHeuristic():
-    def __init__(self, heuristics: list[Simple_Heuristic_Rule]):
-        self.heuristics = heuristics
-
-
-class SimpleHeuristicBuilder():
-    def __init__(self) -> None:
-        self.heuristics = []
-
-    def add_heuristic(self, heuristic: Simple_Heuristic_Rule) -> SimpleHeuristicBuilder:
-        self.heuristics.append(heuristic)
-        return self
-    
-    def build(self) -> SimpleHeuristic:
-        return SimpleHeuristic(self.rules)
-
-def _check_num_in_lines(board: BoardState, player: str, num: int, blocked: bool):
+def _check_num_in_lines(board: BoardState, player: PlayerType, num: int, blocked: bool):
     result = 0
-    opp = 'O'
-    if player == 'O':
-        opp = 'X'
+    opp = PlayerType.O
+    if player == PlayerType.O:
+        opp = PlayerType.X
         
     # check for horizontal consecutive
     for i in range(3):
@@ -32,9 +16,9 @@ def _check_num_in_lines(board: BoardState, player: str, num: int, blocked: bool)
         for j in range(3):
             if board[i][j] == player:
                 total_in_row += 1
-            elif blocked and board[i][j] == opp:
+            elif blocked and board[i][j].value == opp.value:
                 other_in_row += 1
-            elif not blocked and board[i][j] == '':
+            elif not blocked and board[i][j] == CellState.EMPTY:
                 other_in_row += 1
         if (total_in_row == num and other_in_row == 3 - num):
             result += 1
@@ -44,11 +28,11 @@ def _check_num_in_lines(board: BoardState, player: str, num: int, blocked: bool)
         total_in_col = 0
         other_in_col = 0
         for j in range(3):
-            if board[j][i] == player:
+            if board[j][i].value == player.value:
                 total_in_col += 1
-            elif blocked and board[j][i] == opp:
+            elif blocked and board[j][i].value == opp.value:
                 other_in_col += 1
-            elif not blocked and board[j][i] == '':
+            elif not blocked and board[j][i] == CellState.EMPTY:
                 other_in_col += 1
         if (total_in_col == num and other_in_col == 3 - num):
             result += 1
@@ -62,15 +46,15 @@ def _check_num_in_lines(board: BoardState, player: str, num: int, blocked: bool)
         for j in range(3):
             if board[j][j] == player:
                 total_in_diag_left += 1
-            elif blocked and board[j][j] == opp:
+            elif blocked and board[j][j].value == opp.value:
                 other_in_diag_left += 1
-            elif not blocked and board[j][j] == '':
+            elif not blocked and board[j][j] == CellState.EMPTY:
                 other_in_diag_left += 1
             if board[2-j][j] == player:
                 total_in_diag_right += 1
-            elif blocked and board[2-j][j] == opp:
+            elif blocked and board[2-j][j].value == opp.value:
                 other_in_diag_right += 1
-            elif not blocked and board[2-j][j] == '':
+            elif not blocked and board[2-j][j] == CellState.EMPTY:
                 other_in_diag_right += 1
                 
         if ((total_in_diag_left == num and other_in_diag_left == 3 - num) 
@@ -78,27 +62,55 @@ def _check_num_in_lines(board: BoardState, player: str, num: int, blocked: bool)
             result += 1
     return result
 
-def three_in_line(board: BoardState, player: str):
-    return _check_num_in_lines(board, player, 3, False)
+def three_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    simpleList = ultimate_board_state_to_simple_games(board)
+    total = 0
+    for simpleGame in simpleList:
+        total += _check_num_in_lines(simpleGame, player, 3, False)
+    return total
 
-def not_three_in_line(board: BoardState, player: str):
-    if player == 'X':
-        return _check_num_in_lines(board, 'O', 3, False)
-    else:
-        return _check_num_in_lines(board, 'X', 3, False)
+def not_three_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    simpleList = ultimate_board_state_to_simple_games(board)
+    total = 0
+    for simpleGame in simpleList:
+        simple_total = 0
+        if player == PlayerType.X:
+            simple_total += _check_num_in_lines(simpleGame, PlayerType.O, 3, False)
+        else:
+            simple_total += _check_num_in_lines(simpleGame, PlayerType.X, 3, False)
+        total += simple_total
+    return total
     
-def unblocked_two_in_line(board: BoardState, player: str):
-    return _check_num_in_lines(board, player, 2, False)
+def unblocked_two_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    simpleList = ultimate_board_state_to_simple_games(board)
+    total = 0
+    for simpleGame in simpleList:
+        total += _check_num_in_lines(simpleGame, player, 2, False)
+    return total
 
-def block_opp_three_in_line(board: BoardState, player: str):
+def block_opp_three_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
     # fliping the player because our call to check_consecutive checks if the player passed in has 2 in a row
-    if player == 'X':
-        return _check_num_in_lines(board, 'O', 2, True)
-    else: 
-        return _check_num_in_lines(board, 'X', 2, True) 
+    simpleList = ultimate_board_state_to_simple_games(board)
+    total = 0
+    for simpleGame in simpleList:
+        simple_total = 0
+        if player == PlayerType.X:
+            simple_total += _check_num_in_lines(simpleGame, PlayerType.O, 2, True)
+        else: 
+            simple_total += _check_num_in_lines(simpleGame, PlayerType.X, 2, True) 
+        total += simple_total
 
-def fork(board: BoardState, player: str):
-    return unblocked_two_in_line(board, player) >= 2
+def fork(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    simpleList = ultimate_board_state_to_simple_games(board)
+    total = 0
+    for simpleGame in simpleList:
+        if unblocked_two_in_line(simpleGame, player) >= 2:
+            total += 1
+    return total
 
-def unblocked_one_in_line(board: BoardState, player):
-    return _check_num_in_lines(board, player, 1, False)
+def unblocked_one_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    simpleList = ultimate_board_state_to_simple_games(board)
+    total = 0
+    for simpleGame in simpleList:
+        total += _check_num_in_lines(board, player, 1, False)
+    return total
