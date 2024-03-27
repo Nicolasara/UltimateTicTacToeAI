@@ -97,7 +97,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         threesInARow = get_threes_in_a_row(self.unitGames)
         for games in threesInARow:
             if is_wining_three_in_a_row(games):
-                if games[0].winner() == 'X':
+                if games[0].winner() == PlayerType.X:
                     xThreesInARow += 1
                 else:
                     oThreesInARow += 1
