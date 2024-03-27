@@ -2,7 +2,7 @@ from ultimateTicTacToe.ultimateTicTacToe import StrictUltimateTicTacToe
 from unitTicTacToe.unitTicTacToe import PlayerType
 from ultimateTicTacToe.ultimateRuleBook import defaultUltimateRuleBook
 from examples import oneUnitBoardWonUltimateTicTacToeBoard, gameWonUltimateTicTacToeBoard, gameWithThreeWinOptions
-from ultimateHeuristic import moveSendsOpponentToAnyBoard, playerHasWonUltimateBoard, opponentHasWonUltimateBoard, playerUltimateTwoInARows, opponentUltimateTwoInARows, blockedOpponentWins, playerUltimateOneInARows, opponentUltimateOneInARows
+from ultimateTicTacToe.ultimateHeuristic import moveSendsOpponentToAnyBoard, playerHasWonUltimateBoard, opponentHasWonUltimateBoard, playerUltimateTwoInARows, opponentUltimateTwoInARows, blockedOpponentWins, playerUltimateOneInARows, opponentUltimateOneInARows
 
 ### Heuristic Tests
 print("Testing Ultimate Heuristics")
