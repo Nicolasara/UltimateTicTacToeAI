@@ -1,4 +1,4 @@
-from ultimateTicTacToe import UltimateTicTacToe
+from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe
 import math
 
 # assumes existence of a heuristic evaluation function in the UltimateTicTacToe class, call it "heuristic()"

@@ -1,6 +1,7 @@
 from abc import abstractmethod
-from ruleBook import RuleBook, defaultRuleBook
-from simpleTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
+from unitTicTacToe.ruleBook import RuleBook, defaultRuleBook
+from unitTicTacToe.boardStateUtils import get_threes_in_a_row, is_wining_three_in_a_row
+from unitTicTacToe.unitTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
 
 # TicTacToe interface
 class TicTacToe:
@@ -97,7 +98,11 @@ class TurnLessTicTacToe(TicTacToe):
     
     def make_move(self, move: Move, player: PlayerType):
         if (self.ruleBook.is_valid(self.get_board_copy(), move)):
-            self.board[move[0]][move[1]] = player.value
+            if (player == PlayerType.X):
+                cellState = CellState.X
+            else:   
+                cellState = CellState.O
+            self.board[move[0]][move[1]] = cellState
         else:
             raise Exception("Invalid move.")
 
@@ -121,10 +126,10 @@ class TurnLessTicTacToe(TicTacToe):
     def winner(self) -> PlayerType | None:
         xThreesInARow = 0
         oThreesInARow = 0
-        threesInARow = self.get_threes_in_a_row()
+        threesInARow = get_threes_in_a_row(self.get_board_copy())
         for cells in threesInARow:
-            if self.is_three_in_a_row(cells):
-                if cells[0] == 'X':
+            if is_wining_three_in_a_row(cells):
+                if cells[0] == CellState.X:
                     xThreesInARow += 1
                 else:
                     oThreesInARow += 1
@@ -148,51 +153,15 @@ class TurnLessTicTacToe(TicTacToe):
         else:
             return Result.DRAW
 
-    def get_threes_in_a_row(self) -> list[list[CellState]]:
-        column1 = self.get_column(0)
-        column2 = self.get_column(1)
-        column3 = self.get_column(2)
-        row1 = self.get_row(0)
-        row2 = self.get_row(1)
-        row3 = self.get_row(2)
-        diagonal1 = self.get_diagonal(1)
-        diagonal2 = self.get_diagonal(2)
 
-        return [
-            column1, column2, column3,
-            row1, row2, row3,
-            diagonal1, diagonal2
-        ]
         
     def is_board_full(self) -> bool:
         for row in self.board:
             for cell in row:
-                if cell == CellState.EMPTY.value:
+                if cell == CellState.EMPTY:
                     return False
         return True
-
-    def get_column(self, column: int) -> list[CellState]:
-        return [self.board[0][column], self.board[1][column], self.board[2][column]]
     
-    def get_row(self, row: int) -> list[CellState]:
-        return self.board[row]
-    
-    def get_diagonal(self, diagonal: int) -> list[CellState]:
-        """Gets the diagonal of the board.
-
-        Args:
-            diagonal (int): The diagonal to get. 1 for the top-left to bottom-right diagonal, 2 for the top-right to bottom-left diagonal.
-
-        Returns:
-            list[CellState]: The diagonal of the board.
-        """
-        if diagonal == 1:
-            return [self.board[0][0], self.board[1][1], self.board[2][2]]
-        else:
-            return [self.board[0][2], self.board[1][1], self.board[2][0]]
-    
-    def is_three_in_a_row(self, cells: list[CellState]) -> bool:
-        return cells[0] == cells[1] == cells[2] and cells[0] != ''
     
     def toString(self) -> str:
         boardString = ""
@@ -200,9 +169,13 @@ class TurnLessTicTacToe(TicTacToe):
         #if there is winner, print it surrounded by spaces
         if self.is_game_over():
             winner = self.winner() if self.winner() != None else "-"
+            print(winner)
+            print(self.get_board_copy())
             for t in range(5):
                 if t == 2:
                     boardString += " " * 5 + winner.value + " " * 5 + "\n"
+                elif t == 4:
+                    boardString += " " * 11
                 else:
                     boardString += " " * 11 + "\n"
             return boardString
@@ -213,8 +186,10 @@ class TurnLessTicTacToe(TicTacToe):
             #print each column in the row
             for c in range(3):
                 col = row[c]
-                if col == '':
+                if col == CellState.EMPTY:
                     col = " "
+                else:
+                    col = col.value
                 boardString += " " + col + " "
                 #divider
                 if c != 2:
@@ -237,10 +212,14 @@ class TurnLessTicTacToe(TicTacToe):
         
 class TicTacToeFactory:
     @staticmethod
-    def emptyTurnLessGame() -> TicTacToe:
+    def empty_turn_less_game() -> TicTacToe:
         emptyBoard = [
-            ['', '', ''],
-            ['', '', ''],
-            ['', '', '']
+            [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
+            [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
+            [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
         ]
         return TurnLessTicTacToe(emptyBoard, defaultRuleBook)
+    
+    @staticmethod
+    def turn_less_game_from_board(board: BoardState) -> TicTacToe:
+        return TurnLessTicTacToe(board, defaultRuleBook)
