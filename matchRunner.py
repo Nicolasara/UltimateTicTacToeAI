@@ -1,11 +1,20 @@
 from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe, UltimateTicTacToeFactory
 from unitTicTacToe.unitTicTacToeTypes import PlayerType
+from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateMove
 from player import Player
 
 # play a game between two AI players and return the winner
-def playAGame(playerX: Player, playerO: Player, print_game = False):
+def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False):
     # new board state 
     game = UltimateTicTacToeFactory.emptyStrictGame()
+    
+    #make the first move if it is not None
+    if firstMove != None:
+        game.make_move(firstMove)
+    if print_game:
+        print(turn.value + " moves: " + str(move) + "\n")
+        print(game.toString())
+
     while not game.is_game_over():
         move = None
         turn = game.get_turn()
@@ -69,6 +78,22 @@ def playManyGames(playerX: Player, playerO: Player, num_games):
             playerX_wins += 1
         elif winner == PlayerType.O:
             playerO_wins += 1
+    return (playerX_wins, playerO_wins)
+
+# play a set of 81 games starting with the 81 unique first moves possible.
+def playAllFirstMoves(playerX: Player, playerO: Player):
+    playerX_wins = 0
+    playerO_wins = 0
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(3):
+                    firstMove = ((i, j), (k, l))
+                    winner = playAGame(playerX, playerO, firstMove)
+                    if winner == PlayerType.X:
+                        playerX_wins += 1
+                    elif winner == PlayerType.O:
+                        playerO_wins += 1
     return (playerX_wins, playerO_wins)
 
 #example of a player // DEPRECATED
