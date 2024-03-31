@@ -1,66 +1,49 @@
-from ultimateTicTacToe.ultimateTicTacToe import StrictUltimateTicTacToe, ultimate_board_state_to_unit_games
+import numpy as np
+from ultimateTicTacToe.ultimateTicTacToeBase import StrictUltimateTicTacToe, ultimate_board_state_to_unit_games
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateMove, UltimateBoardState
-from unitTicTacToe.unitTicTacToe import PlayerType
+from unitTicTacToe.unitTicTacToeBase import PlayerType
 from ultimateTicTacToe.ultimateRuleBook import defaultUltimateRuleBook
 
-def _check_num_in_ultimate_lines(board: UltimateBoardState, player: PlayerType, num: int, blocked: bool):
+def _check_num_in_ultimate_lines(board: UltimateBoardState, condition: str):
     result = 0
-    opp = PlayerType.O
-    if player == PlayerType.O:
-        opp = PlayerType.X
     unit_games = ultimate_board_state_to_unit_games(board)
+    def convert_winner_to_num(game):
+        if (game.winner() == PlayerType.X):
+            return 1
+        elif (game.winner() == PlayerType.O):
+            return 5
+        else:
+            return 0
+        
+    sum_dict = {0:"empty", 1: "1X", 2: "2X", 3: "3X", 5:"1O", 6:"1X1O", 7:"2X1O", 10:"2O", 11:"1X2O", 15:"3O"}
+    value_arr_func = np.vectorize(convert_winner_to_num)
+    value_arr = value_arr_func(unit_games)
 
     # check for horizontal consecutive
-    for i in range(3):
-        total_in_row = 0
-        other_in_row = 0
-        for j in range(3):
-            if unit_games[i][j].winner() == player:
-                total_in_row += 1
-            elif blocked and unit_games[i][j].winner() == opp:
-                other_in_row += 1
-            elif not blocked and unit_games[i][j].winner() == None:
-                other_in_row += 1
-        if (total_in_row == num and other_in_row == 3 - num):
-            result += 1
+    horizontal_sum = value_arr.sum(axis=1)
+    if sum_dict[horizontal_sum[0]] == condition:
+        result += 1
+    if sum_dict[horizontal_sum[1]] == condition:
+        result += 1
+    if sum_dict[horizontal_sum[2]] == condition:
+        result += 1    
 
     # check for vertical consecutive
-    for i in range(3):
-        total_in_col = 0
-        other_in_col = 0
-        for j in range(3):
-            if unit_games[j][i].winner() == player:
-                total_in_col += 1
-            elif blocked and unit_games[j][i].winner() == opp:
-                other_in_col += 1
-            elif not blocked and unit_games[j][i].winner() == None:
-                other_in_col += 1
-        if (total_in_col == num and other_in_col == 3 - num):
-            result += 1
+    vertical_sum = value_arr.sum(axis=0)
+    if sum_dict[vertical_sum[0]] == condition:
+        result += 1
+    if sum_dict[vertical_sum[1]] == condition:
+        result += 1
+    if sum_dict[vertical_sum[2]] == condition:
+        result += 1  
 
     # check for diagonal consecutive
-    for i in range(2):
-        total_in_diag_left = 0
-        other_in_diag_left = 0
-        total_in_diag_right = 0
-        other_in_diag_right = 0
-        for j in range(3):
-            if unit_games[j][j].winner() == player:
-                total_in_diag_left += 1
-            elif blocked and unit_games[j][j].winner() == opp:
-                other_in_diag_left += 1
-            elif not blocked and unit_games[j][j].winner() == None:
-                other_in_diag_left += 1
-            if unit_games[2-j][j].winner() == player:
-                total_in_diag_right += 1
-            elif blocked and unit_games[2-j][j].winner() == opp:
-                other_in_diag_right += 1
-            elif not blocked and unit_games[2-j][j].winner() == None:
-                other_in_diag_right += 1
-
-        if ((total_in_diag_left == num and other_in_diag_left == 3 - num) 
-            or (total_in_diag_right == num and other_in_diag_right == 3 - num)):
-            result += 1
+    diag1 = np.trace(value_arr)
+    diag2 = np.trace(value_arr[::-1])
+    if sum_dict[diag1] == condition:
+        result += 1
+    if sum_dict[diag2] == condition:
+        result += 1
     return result
 
 ### 1 if the player has won the board, 0 otherwise
@@ -97,23 +80,25 @@ def moveDoesNotSendOpponentToAnyBoard(board: UltimateBoardState, previousMove: U
 
 #counts unblocked ultimate two-in-a-rows for player
 def playerUltimateTwoInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    return _check_num_in_ultimate_lines(board, player, 2, False)
+    condition = '2X' if player == PlayerType.X else '2O'
+    return _check_num_in_ultimate_lines(board, condition)
 
 #counts unblocked ultimate two-in-a-rows for opponent
 def opponentUltimateTwoInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    opp = PlayerType.O if player == PlayerType.X else PlayerType.X
-    return _check_num_in_ultimate_lines(board, opp, 2, False)
+    condition = '2O' if player == PlayerType.X else '2X'
+    return _check_num_in_ultimate_lines(board, condition)
 
 #counts unblocked ultimate one-in-a-rows for player
 def playerUltimateOneInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    return _check_num_in_ultimate_lines(board, player, 1, False)
+    condition = '1X' if player == PlayerType.X else '1O'
+    return _check_num_in_ultimate_lines(board, condition)
 
 #counts unblocked ultimate one-in-a-rows for opponent
 def opponentUltimateOneInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    opp = PlayerType.O if player == PlayerType.X else PlayerType.X
-    return _check_num_in_ultimate_lines(board, opp, 1, False)
+    condition = '1O' if player == PlayerType.X else '1X'
+    return _check_num_in_ultimate_lines(board, condition)
 
 #counts how many times the player is blocking a 2-in-a-row for the opponent
 def blockedOpponentWins(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    opp = PlayerType.O if player == PlayerType.X else PlayerType.X
-    return _check_num_in_ultimate_lines(board, opp, 2, True)
+    condition = '1X2O' if player == PlayerType.X else '2X1O'
+    return _check_num_in_ultimate_lines(board, condition)

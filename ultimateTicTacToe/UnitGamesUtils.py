@@ -1,4 +1,4 @@
-from unitTicTacToe.unitTicTacToe import TicTacToe
+from unitTicTacToe.unitTicTacToeBase import TicTacToe
 from ultimateTicTacToe.ultimateTicTacToeTypes import UnitGames
 
 def get_column(unitGames: UnitGames, column: int) -> list[TicTacToe]:

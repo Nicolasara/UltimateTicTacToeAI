@@ -28,6 +28,12 @@ lostUnitBoard = [
     [CellState.O, CellState.X, CellState.O]
 ]
 
+forkUnitBoard = [
+    [CellState.X, CellState.EMPTY, CellState.X],
+    [CellState.EMPTY, CellState.O, CellState.EMPTY],
+    [CellState.X, CellState.EMPTY, CellState.O]
+]
+
 emptyUnitBoard1 = [
     [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
     [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
@@ -137,6 +143,12 @@ oneUnitBoardWonUltimateTicTacToeBoard = [
     [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard]
 ]
 
+twoUnitBoardWonUltimateTicTacToeBoard = [
+    [wonUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, wonUnitBoard]
+]
+
 gameWonUltimateTicTacToeBoard = [
     [wonUnitBoard, emptyUnitBoard, emptyUnitBoard],
     [emptyUnitBoard, wonUnitBoard, emptyUnitBoard],
@@ -149,3 +161,8 @@ gameWithThreeWinOptions = [
     [emptyUnitBoard, emptyUnitBoard, lostUnitBoard]
 ]
 
+twoUnitBoardFork = [
+    [forkUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [forkUnitBoard, emptyUnitBoard, emptyUnitBoard]
+]

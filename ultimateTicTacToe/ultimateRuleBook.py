@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Callable, Optional
-from unitTicTacToe.unitTicTacToe import TicTacToeFactory, TicTacToe
+from unitTicTacToe.unitTicTacToeBase import TicTacToeFactory, TicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as unitRuleBook
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove
 

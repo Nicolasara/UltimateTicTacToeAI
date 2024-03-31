@@ -1,6 +1,6 @@
 from abc import abstractmethod
 from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, CellState
-from unitTicTacToe.unitTicTacToe import TicTacToe, TurnLessTicTacToe
+from unitTicTacToe.unitTicTacToeBase import TicTacToe, TurnLessTicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as defaultUnitRuleBook
 from ultimateTicTacToe.UnitGamesUtils import get_threes_in_a_row, is_wining_three_in_a_row
 from ultimateTicTacToe.ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook

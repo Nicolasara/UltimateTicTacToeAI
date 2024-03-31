@@ -12,9 +12,9 @@ class PlayerType(Enum):
 # - 'O'
 # - ''
 class CellState(Enum):
-    X = 'X'
-    O = 'O'
-    EMPTY = ''
+    X = 1
+    O = 5
+    EMPTY = 0
 
 # A Result is one of
 # - 'X'

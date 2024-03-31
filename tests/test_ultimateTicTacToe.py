@@ -1,5 +1,4 @@
-from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, UnitGames
-from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe, UltimateTicTacToeFactory
+from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToeFactory
 
 strictUltimateTicTacToe = UltimateTicTacToeFactory.emptyStrictGame()
 
