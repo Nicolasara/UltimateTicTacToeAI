@@ -14,11 +14,12 @@ class TwoDimensionalMove(NamedTuple):
     
 
 class Player:
-    def __init__(self, board_evaluator: BoardEvaluator) -> None:
+    def __init__(self, board_evaluator: BoardEvaluator, maximizing: bool) -> None:
         self.evaluator = board_evaluator
+        self.maximizing = maximizing
     
     def best_move(self, game, depth=3) -> TwoDimensionalMove:
-        _, move = minimax(game, self.evaluator, depth, True, True)
+        _, move = minimax(game, self.evaluator, depth, self.maximizing, True)
         return move
     
     def get_evaluator(self):

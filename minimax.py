@@ -1,9 +1,8 @@
 from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe
 import math
 
-# assumes existence of a heuristic evaluation function in the UltimateTicTacToe class, call it "heuristic()"
 
-def minimax(game: UltimateTicTacToe, depth: int, maximizing: bool, starting: bool):
+def minimax(game: UltimateTicTacToe, board_evaluator, depth: int, maximizing: bool, starting: bool):
     """
     :param UltimateTicTacToe game: the UltimateTicTacToe game instance
     :param int depth: how many moves ahead we want to calculate the heuristic for
@@ -16,7 +15,7 @@ def minimax(game: UltimateTicTacToe, depth: int, maximizing: bool, starting: boo
     """
     
     if game.is_game_over() or depth == 0:
-        return game.heuristic()
+        return board_evaluator.evaluate(game.get_board_copy())
     
     # if we are the maximizing player
     if maximizing:

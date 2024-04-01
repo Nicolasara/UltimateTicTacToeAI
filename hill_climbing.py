@@ -1,43 +1,65 @@
 import random as rd
+from player import Player
+from matchRunner import playAllFirstMoves
 import math
 
 
-def energy_function(weights, num_games: int):
+def energy_function(weights):
     """
     Simulates a number of UltimateTicTacToe games and returns the win rate
 
     :param int[] weights: an array of integer weights to run the game with
-    :param int num_games: number of UltimateTicTacToe games to run
 
     :return int The win rate
     """
 
-    wins = 0
+    # INITIALIZE BOARD EVALUATOR HERE
+    board_evaluator = BoardEvaluator(weights)
 
-    for _ in range(num_games):
-        # run games here using minimax algorithm
-        pass
+    playerX = Player(board_evaluator, maximizing=True)
+    playerO = Player(board_evaluator, maximizing=False)
 
-    return wins / num_games
+    results = playAllFirstMoves(playerX, playerO)
+
+    return results[0] / 81
 
 
-def hill_climbing(initial_weights, num_iterations: int, num_games: int):
+def hill_climbing(initial_weights: dict, num_iterations: int):
     """
     Our hill climbing algorithm to adjust the weights of game heuristics
 
-    :param int[] initial_weights: an array of integer weights to start with
+    :param dict initial_weights: an integer dictionary of weights to start with
     :param int num_iterations: number of hill climbing iterations
     :param int num_games: number of UltimateTicTacToe games to run per hill climbing iteration
 
-    :return (int[], int) The best found set of weights and its associated win rate
+    :return (dict, int) The best found set of weights and its associated win rate
     """
     
     current_weights = initial_weights
     current_win_rate = 0
     
     for _ in range(num_iterations):
-        adjusted_weights = [weight + rd.uniform(-1, 1) for weight in current_weights]
-        win_rate = energy_function(adjusted_weights, num_games)
+
+        d_weights = {}
+        directions = [-1, 1]
+
+        for weight in current_weights:
+            for direction in directions:
+                weights_copy = current_weights.copy()
+                weights_copy[weight] += direction * rd.uniform(0, 1)
+
+                d_win_rate = energy_function(weights_copy)
+
+                if d_win_rate > current_win_rate:
+                    d_weights[weight] = direction
+                    break
+
+        adjusted_weights = current_weights.copy()
+
+        for weight in adjusted_weights:
+            adjusted_weights[weight] = d_weights[weight] * rd.uniform(0, 1)
+
+        win_rate = energy_function(adjusted_weights)
 
         if win_rate > current_win_rate:
             current_weights = adjusted_weights
@@ -47,6 +69,18 @@ def hill_climbing(initial_weights, num_iterations: int, num_games: int):
         
     return best_solution
 
+
+
+
+
+
+
+
+"""
+
+OLD IMPLEMENTATIONS, IGNORE FOR NOW
+
+"""
 
 def hill_climbing_adaptive(initial_weights, num_iterations: int, num_games: int):
     """
