@@ -1,11 +1,11 @@
 from abc import abstractmethod
-import numpy as np
 from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, CellState
 from unitTicTacToe.unitTicTacToeBase import TicTacToe, TurnLessTicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as defaultUnitRuleBook
 from ultimateTicTacToe.UnitGamesUtils import get_threes_in_a_row, is_wining_three_in_a_row
 from ultimateTicTacToe.ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, UnitGames
+import numpy as np
 
 # UltimateTicTacToe interface
 class UltimateTicTacToe:
@@ -48,11 +48,11 @@ class UltimateTicTacToe:
 class StrictUltimateTicTacToe(UltimateTicTacToe):
     """A UltimateTicTacToe game that enforces the rules of the game using a passed in RuleBook.
     """
-    def __init__(self, board: UltimateBoardState, ruleBook: UltimateRuleBook):
+    def __init__(self, board: UltimateBoardState, ruleBook: UltimateRuleBook = defaultUltimateRuleBook, turn: PlayerType = PlayerType.X):
         super().__init__()  
         self.unitGames = ultimate_board_state_to_unit_games(board)
         self.ruleBook = ruleBook
-        self.turn = PlayerType.X
+        self.turn = turn
         self.pastMove = None
 
     def get_turn(self) -> PlayerType:
@@ -95,8 +95,6 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         return self.winner() != None
     
     def is_game_over(self) -> bool:
-        print("has someone won: ", self.has_someone_won())
-        print("board full: ", self.is_board_full())
         hasSomeoneWon = self.has_someone_won()
         boardFull = self.is_board_full()
         return hasSomeoneWon or boardFull

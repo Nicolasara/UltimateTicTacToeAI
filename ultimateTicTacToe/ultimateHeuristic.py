@@ -81,11 +81,13 @@ def XCanMoveOnAnyBoard(board: UltimateBoardState, previousMove: UltimateMove, pl
     unitBoard = ultimate_board_state_to_unit_games(board)[previousMove[1][0]][previousMove[1][1]]
     if unitBoard.is_game_over():
         return 1 if player == PlayerType.X else 0
+    return 0
     
 def OCanMoveOnAnyBoard(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
     unitBoard = ultimate_board_state_to_unit_games(board)[previousMove[1][0]][previousMove[1][1]]
     if unitBoard.is_game_over():
         return 1 if player == PlayerType.O else 0
+    return 0
 
 
 # ### 1 if the move sends the opponent to a board that is over, 0 otherwise

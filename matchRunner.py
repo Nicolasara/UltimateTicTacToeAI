@@ -3,12 +3,12 @@ from unitTicTacToe.unitTicTacToeTypes import PlayerType
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateMove
 from player import Player
 
+from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluatorFactory
+
 # play a game between two AI players and return the winner
 def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False):
     # new board state 
     game = UltimateTicTacToeFactory.emptyStrictGame()
-    print(game.toString())
-    print("game is over: ", game.is_game_over())
 
     #make the first move if it is not None
     if firstMove != None:
@@ -20,13 +20,11 @@ def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, 
     while not game.is_game_over():
         move = None
         turn = game.get_turn()
-        print("Turn: ", turn.value)
         if turn == PlayerType.X:
             move = playerX.best_move(game)
         else:
             move = playerO.best_move(game)
         #assumes that the move is valid!
-        print("Move: ", move)
         game.make_move(move)
         if print_game:
             print(turn.value + " moves: " + str(move) + "\n")

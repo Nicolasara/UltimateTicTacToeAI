@@ -185,10 +185,14 @@ class TurnLessTicTacToe(TicTacToe):
             #print each column in the row
             for c in range(3):
                 col = row[c]
-                if col == CellState.EMPTY:
+                if col == CellState.EMPTY.value:
                     col = " "
+                elif col == CellState.X.value:
+                    col = "X"
+                elif col == CellState.O.value:
+                    col = "O"
                 else:
-                    col = col.value
+                    raise Exception("Invalid cell state.")
                 boardString += " " + col + " "
                 #divider
                 if c != 2:

@@ -6,7 +6,7 @@ from unitTicTacToe.unitTicTacToeTypes import BoardState, CellState, PlayerType
 
 def _check_num_in_lines(board: BoardState, condition: str):
     sum_dict = {0:"empty", 1: "1X", 2: "2X", 3: "3X", 5:"1O", 6:"1X1O", 7:"2X1O", 10:"2O", 11:"1X2O", 15:"3O"}
-    value_arr_func = np.vectorize(lambda e: e.value)
+    value_arr_func = np.vectorize(lambda e: e)
     value_arr = value_arr_func(board.get_board_copy())
     result = 0
 
