@@ -37,7 +37,7 @@ def get_threes_in_a_row(board) -> list[list[CellState]]:
     ]
 
 def is_wining_three_in_a_row(cells: list[CellState]) -> bool:
-    return cells[0] == cells[1] == cells[2] and cells[0] != CellState.EMPTY
+    return cells[0] == cells[1] == cells[2] and cells[0] != CellState.EMPTY.value
 
 def has_board_been_won(board: BoardState) -> bool:
     threesInARow = get_threes_in_a_row(board)

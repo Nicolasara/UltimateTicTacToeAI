@@ -29,7 +29,7 @@ class RuleBookBuilder():
     
 def move_on_empty_cell(board: BoardState, move: Move) -> bool:
     try:
-        return board[move[0]][move[1]] == CellState.EMPTY
+        return board[move[0]][move[1]] == CellState.EMPTY.value
     except IndexError:
         return False
 

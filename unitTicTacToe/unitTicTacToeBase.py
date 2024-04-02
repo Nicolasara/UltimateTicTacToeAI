@@ -1,7 +1,11 @@
 from abc import abstractmethod
+from concurrent.futures import ThreadPoolExecutor
+import numpy as np
 from unitTicTacToe.ruleBook import RuleBook, defaultRuleBook
 from unitTicTacToe.boardStateUtils import get_threes_in_a_row, is_wining_three_in_a_row
 from unitTicTacToe.unitTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
+
+BoardSize = 3
 
 # TicTacToe interface
 class TicTacToe:
@@ -90,30 +94,25 @@ class TurnLessTicTacToe(TicTacToe):
         raise Exception("This implementation does not have a turn.")
     
     def get_board_copy(self) -> BoardState:
-        return [
-            [self.board[0][0], self.board[0][1], self.board[0][2]],
-            [self.board[1][0], self.board[1][1], self.board[1][2]],
-            [self.board[2][0], self.board[2][1], self.board[2][2]]
-        ]
+        return np.copy(self.board)
     
     def make_move(self, move: Move, player: PlayerType):
         if (self.ruleBook.is_valid(self.get_board_copy(), move)):
             if (player == PlayerType.X):
-                cellState = CellState.X
+                cellState = CellState.X.value
             else:   
-                cellState = CellState.O
+                cellState = CellState.O.value
             self.board[move[0]][move[1]] = cellState
         else:
             raise Exception("Invalid move.")
 
     def possible_moves(self) -> list[Move]:
-        moves = []
-        for i in range(3):
-            for j in range(3):
-                move: Move = (i, j)
-                if self.ruleBook.is_valid(self.get_board_copy(), move):
-                    moves.append(move)
-        return moves
+        moves = np.array(np.meshgrid(np.arange(BoardSize), np.arange(BoardSize))).T.reshape(-1, 2)
+        totalTiles = BoardSize * BoardSize
+        with ThreadPoolExecutor(max_workers=totalTiles) as executor:
+            validMoves = list(executor.map(lambda move: self.ruleBook.is_valid(self.get_board_copy(), move), moves))
+            validMoves = np.array([moves[i] for i in range(len(validMoves)) if validMoves[i]])
+            return list(validMoves)
     
     def has_someone_won(self) -> bool:
         return self.winner() != None
@@ -158,7 +157,7 @@ class TurnLessTicTacToe(TicTacToe):
     def is_board_full(self) -> bool:
         for row in self.board:
             for cell in row:
-                if cell == CellState.EMPTY:
+                if cell == CellState.EMPTY.value:
                     return False
         return True
     
@@ -213,11 +212,7 @@ class TurnLessTicTacToe(TicTacToe):
 class TicTacToeFactory:
     @staticmethod
     def empty_turn_less_game() -> TicTacToe:
-        emptyBoard = [
-            [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-            [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-            [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
-        ]
+        emptyBoard = np.full((3,3), CellState.EMPTY.value)
         return TurnLessTicTacToe(emptyBoard, defaultRuleBook)
     
     @staticmethod
