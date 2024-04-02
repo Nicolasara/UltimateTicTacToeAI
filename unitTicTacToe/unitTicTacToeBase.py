@@ -128,7 +128,7 @@ class TurnLessTicTacToe(TicTacToe):
         threesInARow = get_threes_in_a_row(self.get_board_copy())
         for cells in threesInARow:
             if is_wining_three_in_a_row(cells):
-                if cells[0] == CellState.X:
+                if cells[0] == CellState.X.value:
                     xThreesInARow += 1
                 else:
                     oThreesInARow += 1
