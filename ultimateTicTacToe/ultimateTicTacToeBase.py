@@ -1,11 +1,11 @@
 from abc import abstractmethod
-import numpy as np
 from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, CellState
 from unitTicTacToe.unitTicTacToeBase import TicTacToe, TurnLessTicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as defaultUnitRuleBook
 from ultimateTicTacToe.UnitGamesUtils import get_threes_in_a_row, is_wining_three_in_a_row
 from ultimateTicTacToe.ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, UnitGames
+import numpy as np
 
 # UltimateTicTacToe interface
 class UltimateTicTacToe:
@@ -32,23 +32,27 @@ class UltimateTicTacToe:
     def is_game_over(self) -> bool:
         pass
 
+    @abstractmethod
+    def get_last_move(self) -> UltimateMove:
+        pass
+
     def toString() -> str:
         pass
     
-    def winner(self) -> PlayerType | None:
+    def winner(self) -> PlayerType:
         pass
   
-    def result() -> Result | None:
+    def result() -> Result:
         pass
 
 class StrictUltimateTicTacToe(UltimateTicTacToe):
     """A UltimateTicTacToe game that enforces the rules of the game using a passed in RuleBook.
     """
-    def __init__(self, board: UltimateBoardState, ruleBook: UltimateRuleBook):
+    def __init__(self, board: UltimateBoardState, ruleBook: UltimateRuleBook = defaultUltimateRuleBook, turn: PlayerType = PlayerType.X):
         super().__init__()  
         self.unitGames = ultimate_board_state_to_unit_games(board)
         self.ruleBook = ruleBook
-        self.turn = PlayerType.X
+        self.turn = turn
         self.pastMove = None
 
     def get_turn(self) -> PlayerType:
@@ -84,6 +88,9 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
                             possibleMoves.append(move)
         return possibleMoves
     
+    def get_last_move(self) -> UltimateMove:
+        return self.pastMove
+    
     def has_someone_won(self) -> bool:
         return self.winner() != None
     
@@ -92,7 +99,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         boardFull = self.is_board_full()
         return hasSomeoneWon or boardFull
     
-    def winner(self) -> PlayerType | None:
+    def winner(self) -> PlayerType:
         xThreesInARow = 0
         oThreesInARow = 0
         threesInARow = get_threes_in_a_row(self.unitGames)
@@ -112,7 +119,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         else:
             raise Exception("There should only be one winner, but the board seems to have multiple winners.")
         
-    def result(self) -> Result | None:
+    def result(self) -> Result:
         if not self.is_game_over():
             return None
         elif self.winner() == PlayerType.X:

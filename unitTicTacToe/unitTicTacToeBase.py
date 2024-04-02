@@ -62,7 +62,7 @@ class TicTacToe:
         """
         pass
 
-    def winner(self) -> PlayerType | None:
+    def winner(self) -> PlayerType:
         """Determines the winner of the game.
 
         Returns:
@@ -70,7 +70,7 @@ class TicTacToe:
         """
         pass
 
-    def result(self) -> Result | None:
+    def result(self) -> Result:
         """Determines the result of the game.
 
         Returns:
@@ -122,7 +122,7 @@ class TurnLessTicTacToe(TicTacToe):
         boardFull = self.is_board_full()
         return hasSomeoneWon or boardFull
     
-    def winner(self) -> PlayerType | None:
+    def winner(self) -> PlayerType:
         xThreesInARow = 0
         oThreesInARow = 0
         threesInARow = get_threes_in_a_row(self.get_board_copy())
@@ -142,7 +142,7 @@ class TurnLessTicTacToe(TicTacToe):
         else:
             raise Exception("There should only be one winner, but the board seems to have multiple winners.")
 
-    def result(self) -> Result | None:
+    def result(self) -> Result:
         if not self.is_game_over():
             return None
         elif self.winner() == PlayerType.X:
@@ -185,10 +185,14 @@ class TurnLessTicTacToe(TicTacToe):
             #print each column in the row
             for c in range(3):
                 col = row[c]
-                if col == CellState.EMPTY:
+                if col == CellState.EMPTY.value:
                     col = " "
+                elif col == CellState.X.value:
+                    col = "X"
+                elif col == CellState.O.value:
+                    col = "O"
                 else:
-                    col = col.value
+                    raise Exception("Invalid cell state.")
                 boardString += " " + col + " "
                 #divider
                 if c != 2:

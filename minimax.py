@@ -1,8 +1,9 @@
-from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe
+from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe, StrictUltimateTicTacToe
+from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator
 import math
 
 
-def minimax(game: UltimateTicTacToe, board_evaluator, depth: int, maximizing: bool, starting: bool):
+def minimax(game: UltimateTicTacToe, board_evaluator: UltimateBoardEvaluator, depth: int, maximizing: bool, starting: bool = False):
     """
     :param UltimateTicTacToe game: the UltimateTicTacToe game instance
     :param int depth: how many moves ahead we want to calculate the heuristic for
@@ -15,22 +16,23 @@ def minimax(game: UltimateTicTacToe, board_evaluator, depth: int, maximizing: bo
     """
     
     if game.is_game_over() or depth == 0:
-        return board_evaluator.evaluate(game.get_board_copy())
+        return board_evaluator.evaluate(game.get_board_copy(), game.get_last_move(), game.get_turn())
     
     # if we are the maximizing player
     if maximizing:
         best_value = -math.inf
         best_move = None
 
+        values = {}
+
         for move in game.possible_moves():
-            game_copy = UltimateTicTacToe(game.get_board_copy())
+            game_copy = StrictUltimateTicTacToe(board = game.get_board_copy(), turn = game.get_turn())
             game_copy.make_move(move)
 
-            heuristic = max(minimax(game_copy, depth - 1, False, False))
+            values[move] = minimax(game_copy, board_evaluator, depth - 1, False)
 
-            if heuristic > best_value:
-                best_value = heuristic
-                best_move = move
+        best_move = max(values, key=values.get)
+        best_value = values[best_move]
         
         if starting:
             return best_value, best_move
@@ -42,15 +44,16 @@ def minimax(game: UltimateTicTacToe, board_evaluator, depth: int, maximizing: bo
         best_value = math.inf
         best_move = None
 
+        values = {}
+
         for move in game.possible_moves():
-            game_copy = UltimateTicTacToe(game.get_board_copy())
+            game_copy = StrictUltimateTicTacToe(board = game.get_board_copy(), turn = game.get_turn())
             game_copy.make_move(move)
 
-            heuristic = min(minimax(game_copy, depth - 1, True, False))
+            values[move] = minimax(game_copy, board_evaluator, depth - 1, True)
 
-            if heuristic < best_value:
-                best_value = heuristic
-                best_move = move
+        best_move = min(values, key=values.get)
+        best_value = values[best_move]
         
         if starting:
             return best_value, best_move

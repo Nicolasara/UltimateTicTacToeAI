@@ -2,9 +2,11 @@ import random as rd
 from player import Player
 from matchRunner import playAllFirstMoves
 import math
+from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator
+import numpy as np
 
 
-def energy_function(weights):
+def energy_function(board_evaluator: UltimateBoardEvaluator):
     """
     Simulates a number of UltimateTicTacToe games and returns the win rate
 
@@ -12,9 +14,6 @@ def energy_function(weights):
 
     :return int The win rate
     """
-
-    # INITIALIZE BOARD EVALUATOR HERE
-    board_evaluator = BoardEvaluator(weights)
 
     playerX = Player(board_evaluator, maximizing=True)
     playerO = Player(board_evaluator, maximizing=False)
@@ -24,7 +23,7 @@ def energy_function(weights):
     return results[0] / 81
 
 
-def hill_climbing(initial_weights: dict, num_iterations: int):
+def hill_climbing(evaluator: UltimateBoardEvaluator, num_iterations: int):
     """
     Our hill climbing algorithm to adjust the weights of game heuristics
 
@@ -35,32 +34,39 @@ def hill_climbing(initial_weights: dict, num_iterations: int):
     :return (dict, int) The best found set of weights and its associated win rate
     """
     
-    current_weights = initial_weights
+    current_weights = evaluator.get_weights()
     current_win_rate = 0
     
     for _ in range(num_iterations):
 
-        d_weights = {}
+        d_weights = np.zeros(len(current_weights))
         directions = [-1, 1]
 
-        for weight in current_weights:
+        # run 81 games for each weight in each direction, recording best direction to move in
+        for i in range(len(current_weights)):
             for direction in directions:
                 weights_copy = current_weights.copy()
-                weights_copy[weight] += direction * rd.uniform(0, 1)
+                weights_copy[i] += direction * rd.uniform(0, 1)
+                # TODO - we're making a lot of evaluator copies here. Expensive?
+                new_evaluator = evaluator.build_copy(weights_copy)
 
-                d_win_rate = energy_function(weights_copy)
+                d_win_rate = energy_function(new_evaluator)
 
+                # if both negative and positive changes have a positive impact, we should check for better impact
                 if d_win_rate > current_win_rate:
-                    d_weights[weight] = direction
+                    d_weights[i] = direction
                     break
 
         adjusted_weights = current_weights.copy()
 
-        for weight in adjusted_weights:
-            adjusted_weights[weight] = d_weights[weight] * rd.uniform(0, 1)
+        # adjust all weights based on tests above
+        for i in range(len(adjusted_weights)):
+            adjusted_weights[i] += d_weights[i] * rd.uniform(0, 1)
 
-        win_rate = energy_function(adjusted_weights)
+        # get a win rate with all weights adjusted
+        win_rate = energy_function(evaluator.build_copy(adjusted_weights))
 
+        # if 
         if win_rate > current_win_rate:
             current_weights = adjusted_weights
             current_win_rate = win_rate
