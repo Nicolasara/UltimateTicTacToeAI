@@ -31,6 +31,10 @@ class UltimateTicTacToe:
     def is_game_over(self) -> bool:
         pass
 
+    @abstractmethod
+    def get_last_move(self) -> UltimateMove:
+        pass
+
     def toString() -> str:
         pass
     
@@ -82,6 +86,9 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
                         if self.ruleBook.is_valid(self.get_board_copy(), move, self.pastMove):
                             possibleMoves.append(move)
         return possibleMoves
+    
+    def get_last_move(self) -> UltimateMove:
+        return self.pastMove
     
     def has_someone_won(self) -> bool:
         return self.winner() != None

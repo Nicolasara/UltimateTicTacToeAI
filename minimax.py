@@ -1,8 +1,9 @@
-from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe
+from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe
+from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator
 import math
 
 
-def minimax(game: UltimateTicTacToe, board_evaluator, depth: int, maximizing: bool, starting: bool):
+def minimax(game: UltimateTicTacToe, board_evaluator: UltimateBoardEvaluator, depth: int, maximizing: bool, starting: bool = False):
     """
     :param UltimateTicTacToe game: the UltimateTicTacToe game instance
     :param int depth: how many moves ahead we want to calculate the heuristic for
@@ -15,7 +16,7 @@ def minimax(game: UltimateTicTacToe, board_evaluator, depth: int, maximizing: bo
     """
     
     if game.is_game_over() or depth == 0:
-        return board_evaluator.evaluate(game.get_board_copy())
+        return board_evaluator.evaluate(game.get_board_copy(), game.get_last_move(), game.get_turn())
     
     # if we are the maximizing player
     if maximizing:
@@ -26,7 +27,7 @@ def minimax(game: UltimateTicTacToe, board_evaluator, depth: int, maximizing: bo
             game_copy = UltimateTicTacToe(game.get_board_copy())
             game_copy.make_move(move)
 
-            heuristic = max(minimax(game_copy, depth - 1, False, False))
+            heuristic = max(minimax(game_copy, depth - 1, False))
 
             if heuristic > best_value:
                 best_value = heuristic
@@ -46,7 +47,7 @@ def minimax(game: UltimateTicTacToe, board_evaluator, depth: int, maximizing: bo
             game_copy = UltimateTicTacToe(game.get_board_copy())
             game_copy.make_move(move)
 
-            heuristic = min(minimax(game_copy, depth - 1, True, False))
+            heuristic = min(minimax(game_copy, depth - 1, True))
 
             if heuristic < best_value:
                 best_value = heuristic

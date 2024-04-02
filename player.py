@@ -1,6 +1,7 @@
 from typing import NamedTuple
-from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToe
+from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe
 from minimax import minimax
+from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator
 
 class Move(NamedTuple):
     row: int
@@ -14,7 +15,7 @@ class TwoDimensionalMove(NamedTuple):
     
 
 class Player:
-    def __init__(self, board_evaluator: BoardEvaluator, maximizing: bool) -> None:
+    def __init__(self, board_evaluator: UltimateBoardEvaluator, maximizing: bool) -> None:
         self.evaluator = board_evaluator
         self.maximizing = maximizing
     
