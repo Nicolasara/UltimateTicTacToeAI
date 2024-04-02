@@ -20,11 +20,10 @@ class UltimateBoardEvaluator:
         self.readableNames = readableNames
 
     def evaluate(self, board: UltimateBoardState, move: UltimateMove, player: PlayerType) -> int:
-        # heuristicCount = len(self.heuristics)
-        # with ThreadPoolExecutor(max_workers=heuristicCount) as executor:
-        #     scores = np.array(executor.map(lambda h: h(board, move, player), self.heuristics))
-        scores = np.array([h(board, move, player) for h in self.heuristics])
-        return scores @ self.weights
+        heuristicCount = len(self.heuristics)
+        with ThreadPoolExecutor(max_workers=heuristicCount) as executor:
+            scores = np.array(list(executor.map(lambda h: h(board, move, player), self.heuristics)))
+            return scores @ self.weights
         
 
 class UltimateBoardEvaluatorBuilder:
