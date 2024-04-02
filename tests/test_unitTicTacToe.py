@@ -1,3 +1,4 @@
+import numpy as np
 from unitTicTacToe.ruleBook import defaultRuleBook, move_on_empty_cell, move_in_bounds, game_has_not_been_won
 from unitTicTacToe.unitTicTacToeBase import TicTacToe, TurnLessTicTacToe, TicTacToeFactory
 from unitTicTacToe.unitTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
@@ -35,7 +36,16 @@ except Exception as e:
 print(" + get_turn() method passed")
 
 ## possible moves on empty game
-assert set(emptyTurnLessGame.possible_moves()) == set([(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)])
+def contains_subarray(arr_2d, specific_array):
+    for sub_array in arr_2d:
+        if np.array_equal(sub_array, specific_array):
+            return True
+    return False
+
+possibleMoves = emptyTurnLessGame.possible_moves()
+for i in range(3):
+    for j in range(3):
+        assert contains_subarray(possibleMoves, [i, j])
 print(" + possible_moves() method passed on empty game")
 
 ## show that has_someone_won() method returns False on empty game
@@ -56,18 +66,21 @@ print(" + result() method passed on empty game")
 
 ## make move on empty game
 
-emptyTurnLessGame.make_move((0, 0), CellState.X)
+emptyTurnLessGame.make_move((0, 0), PlayerType.X)
 expectedBoardState = [
-    [CellState.X, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.X.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 assert unit_board_states_equal(emptyTurnLessGame.get_board_copy(), expectedBoardState)
 
 print(" + make_move() method passed first initial move")
 
 ## possible moves updated after move
-assert set(emptyTurnLessGame.possible_moves()) == set([(0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)])
+possibleMoves = emptyTurnLessGame.possible_moves()
+expectedMoves = [[0, 1], [0, 2], [1, 0], [1, 1], [1, 2], [2, 0], [2, 1], [2, 2]]
+for expectedMove in expectedMoves:
+    assert contains_subarray(possibleMoves, expectedMove)
 print(" + possible_moves() method passed after first move")
 
 ## show that has_someone_won() method returns False after first move
@@ -87,10 +100,10 @@ assert emptyTurnLessGame.result() == None
 print(" + result() method passed after first move")
 
 ## make moves until x wins
-emptyTurnLessGame.make_move((0, 1), CellState.O)
-emptyTurnLessGame.make_move((1, 0), CellState.X)
-emptyTurnLessGame.make_move((1, 1), CellState.O)
-emptyTurnLessGame.make_move((2, 0), CellState.X)
+emptyTurnLessGame.make_move((0, 1), PlayerType.O)
+emptyTurnLessGame.make_move((1, 0), PlayerType.X)
+emptyTurnLessGame.make_move((1, 1), PlayerType.O)
+emptyTurnLessGame.make_move((2, 0), PlayerType.X)
 assert emptyTurnLessGame.has_someone_won() == True
 assert emptyTurnLessGame.is_game_over() == True
 assert emptyTurnLessGame.winner() == PlayerType.X
@@ -106,15 +119,15 @@ print(" + possible_moves() method passed after x wins")
 ## make moves until draw
 emptyTurnLessGame = TicTacToeFactory.empty_turn_less_game()
 
-emptyTurnLessGame.make_move((0, 0), CellState.X)
-emptyTurnLessGame.make_move((0, 2), CellState.X)
-emptyTurnLessGame.make_move((1, 1), CellState.X)
-emptyTurnLessGame.make_move((2, 1), CellState.X)
-emptyTurnLessGame.make_move((0, 1), CellState.O)
-emptyTurnLessGame.make_move((1, 0), CellState.O)
-emptyTurnLessGame.make_move((1, 2), CellState.O)
-emptyTurnLessGame.make_move((2, 0), CellState.O)
-emptyTurnLessGame.make_move((2, 2), CellState.O)
+emptyTurnLessGame.make_move((0, 0), PlayerType.X)
+emptyTurnLessGame.make_move((0, 2), PlayerType.X)
+emptyTurnLessGame.make_move((1, 1), PlayerType.X)
+emptyTurnLessGame.make_move((2, 1), PlayerType.X)
+emptyTurnLessGame.make_move((0, 1), PlayerType.O)
+emptyTurnLessGame.make_move((1, 0), PlayerType.O)
+emptyTurnLessGame.make_move((1, 2), PlayerType.O)
+emptyTurnLessGame.make_move((2, 0), PlayerType.O)
+emptyTurnLessGame.make_move((2, 2), PlayerType.O)
 assert emptyTurnLessGame.has_someone_won() == False
 assert emptyTurnLessGame.is_game_over() == True
 assert emptyTurnLessGame.winner() == None

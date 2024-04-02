@@ -2,82 +2,82 @@ from unitTicTacToe.unitTicTacToeTypes import CellState
 
 ### Example of a empty board
 emptyUnitBoard = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 
 ### Example of a tied board
 tiedUnitBoard = [
-    [CellState.X, CellState.O, CellState.X],
-    [CellState.O, CellState.X, CellState.O],
-    [CellState.O, CellState.X, CellState.O]
+    [CellState.X.value, CellState.O.value, CellState.X.value],
+    [CellState.O.value, CellState.X.value, CellState.O.value],
+    [CellState.O.value, CellState.X.value, CellState.O.value]
 ]
 
 ### Example of a won game
 wonUnitBoard = [
-    [CellState.X, CellState.O, CellState.X],
-    [CellState.O, CellState.X, CellState.O],
-    [CellState.X, CellState.EMPTY, CellState.EMPTY]
+    [CellState.X.value, CellState.O.value, CellState.X.value],
+    [CellState.O.value, CellState.X.value, CellState.O.value],
+    [CellState.X.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 
 ### Example of a lost game
 lostUnitBoard = [
-    [CellState.O, CellState.O, CellState.X],
-    [CellState.O, CellState.X, CellState.O],
-    [CellState.O, CellState.X, CellState.O]
+    [CellState.O.value, CellState.O.value, CellState.X.value],
+    [CellState.O.value, CellState.X.value, CellState.O.value],
+    [CellState.O.value, CellState.X.value, CellState.O.value]
 ]
 
 forkUnitBoard = [
-    [CellState.X, CellState.EMPTY, CellState.X],
-    [CellState.EMPTY, CellState.O, CellState.EMPTY],
-    [CellState.X, CellState.EMPTY, CellState.O]
+    [CellState.X.value, CellState.EMPTY.value, CellState.X.value],
+    [CellState.EMPTY.value, CellState.O.value, CellState.EMPTY.value],
+    [CellState.X.value, CellState.EMPTY.value, CellState.O.value]
 ]
 
 emptyUnitBoard1 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 emptyUnitBoard2 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 emptyUnitBoard3 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 emptyUnitBoard4 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 emptyUnitBoard5 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 emptyUnitBoard6 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 emptyUnitBoard7 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 emptyUnitBoard8 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 emptyUnitBoard9 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 emptyUltimateTicTacToeBoard = [
     [emptyUnitBoard1, emptyUnitBoard2, emptyUnitBoard3],
@@ -87,49 +87,49 @@ emptyUltimateTicTacToeBoard = [
 
 # Example of a board with some moves
 ticTacToeBoard1 = [
-    [CellState.X, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.O, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.X.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.O.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 ticTacToeBoard2 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.X, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.X.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 ticTacToeBoard3 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 ticTacToeBoard4 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 ticTacToeBoard5 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 ticTacToeBoard6 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 ticTacToeBoard7 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 ticTacToeBoard8 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 ticTacToeBoard9 = [
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
-    [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value],
+    [CellState.EMPTY.value, CellState.EMPTY.value, CellState.EMPTY.value]
 ]
 
 ultimateTicTacToeBoard = [

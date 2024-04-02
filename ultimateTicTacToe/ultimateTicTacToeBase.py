@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import numpy as np
 from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, CellState
 from unitTicTacToe.unitTicTacToeBase import TicTacToe, TurnLessTicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as defaultUnitRuleBook
@@ -178,7 +179,7 @@ def ultimate_board_state_to_unit_games(board: UltimateBoardState) -> UnitGames:
 class UltimateTicTacToeFactory:
     @staticmethod
     def emptyStrictGame() -> UltimateTicTacToe:
-        emptyBoard = [[[[CellState.EMPTY for _ in range(3)] for _ in range(3)] for _ in range(3)] for _ in range(3)]
+        emptyBoard = np.full((3, 3, 3, 3), CellState.EMPTY.value)
         return StrictUltimateTicTacToe(emptyBoard, defaultUltimateRuleBook)
     
 game = UltimateTicTacToeFactory.emptyStrictGame()
