@@ -1,125 +1,93 @@
-from ultimateTicTacToe.ultimateTicTacToe import UltimateTicTacToeFactory, ultimate_board_state_to_unit_games
+import numpy as np
+from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToeFactory, ultimate_board_state_to_unit_games
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove
 from unitTicTacToe.unitTicTacToeTypes import BoardState, CellState, PlayerType
 
 
-def _check_num_in_lines(board: BoardState, player: PlayerType, num: int, blocked: bool):
+def _check_num_in_lines(board: BoardState, condition: str):
+    sum_dict = {0:"empty", 1: "1X", 2: "2X", 3: "3X", 5:"1O", 6:"1X1O", 7:"2X1O", 10:"2O", 11:"1X2O", 15:"3O"}
+    value_arr_func = np.vectorize(lambda e: e.value)
+    value_arr = value_arr_func(board.get_board_copy())
     result = 0
-    opp = PlayerType.O
-    if player == PlayerType.O:
-        opp = PlayerType.X
+
     # check for horizontal consecutive
-    for i in range(3):
-        total_in_row = 0
-        other_in_row = 0
-        for j in range(3):
-            print(board[i][j] == CellState.EMPTY)
-            if board[i][j].value == player.value:
-                total_in_row += 1
-            elif blocked and board[i][j].value == opp.value:
-                other_in_row += 1
-            elif (not blocked) and board[i][j] == CellState.EMPTY:
-                other_in_row += 1
-        if (total_in_row == num and other_in_row == 3 - num):
-            result += 1
+    horizontal_sum = value_arr.sum(axis=1)
+    if sum_dict[horizontal_sum[0]] == condition:
+        result += 1
+    if sum_dict[horizontal_sum[1]] == condition:
+        result += 1
+    if sum_dict[horizontal_sum[2]] == condition:
+        result += 1    
 
     # check for vertical consecutive
-    for i in range(3):
-        total_in_col = 0
-        other_in_col = 0
-        for j in range(3):
-            if board[j][i].value == player.value:
-                total_in_col += 1
-            elif blocked and board[j][i].value == opp.value:
-                other_in_col += 1
-            elif not blocked and board[j][i] == CellState.EMPTY:
-                other_in_col += 1
-        if (total_in_col == num and other_in_col == 3 - num):
-            result += 1
-        
+    vertical_sum = value_arr.sum(axis=0)
+    if sum_dict[vertical_sum[0]] == condition:
+        result += 1
+    if sum_dict[vertical_sum[1]] == condition:
+        result += 1
+    if sum_dict[vertical_sum[2]] == condition:
+        result += 1  
+
     # check for diagonal consecutive
-    for i in range(2):
-        total_in_diag_left = 0
-        other_in_diag_left = 0
-        total_in_diag_right = 0
-        other_in_diag_right = 0
-        for j in range(3):
-            if board[j][j].value == player.value:
-                total_in_diag_left += 1
-            elif blocked and board[j][j].value == opp.value:
-                other_in_diag_left += 1
-            elif not blocked and board[j][j] == CellState.EMPTY:
-                other_in_diag_left += 1
-            if board[2-j][j].value == player.value:
-                total_in_diag_right += 1
-            elif blocked and board[2-j][j].value == opp.value:
-                other_in_diag_right += 1
-            elif not blocked and board[2-j][j] == CellState.EMPTY:
-                other_in_diag_right += 1
-                
-        if ((total_in_diag_left == num and other_in_diag_left == 3 - num) 
-            or (total_in_diag_right == num and other_in_diag_right == 3 - num)):
-            result += 1
+    diag1 = np.trace(value_arr)
+    diag2 = np.trace(value_arr[::-1])
+    if sum_dict[diag1] == condition:
+        result += 1
+    if sum_dict[diag2] == condition:
+        result += 1
+
     return result
 
-def three_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
-    simpleList = ultimate_board_state_to_unit_games(board)
-    total = 0
-    for simpleGame in simpleList:
-        total += _check_num_in_lines(simpleGame, player, 3, False)
-    return total
 
-def not_three_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+def three_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    condition = "3" + player.value
     simpleList = ultimate_board_state_to_unit_games(board)
-    total = 0
-    for simpleGame in simpleList:
-        simple_total = 0
-        if player == PlayerType.X:
-            simple_total += _check_num_in_lines(simpleGame, PlayerType.O, 3, False)
-        else:
-            simple_total += _check_num_in_lines(simpleGame, PlayerType.X, 3, False)
-        total += simple_total
-    return total
+    total_func = np.vectorize(lambda e: _check_num_in_lines(e, condition))
+    total = np.matrix(total_func(simpleList))
+
+    return total.sum()
+
+def opp_three_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    condition = '3O' if player == PlayerType.X else '3X'
+    simpleList = ultimate_board_state_to_unit_games(board)
+    total_func = np.vectorize(lambda e: _check_num_in_lines(e, condition))
+    total = np.matrix(total_func(simpleList))
+
+    return total.sum()
     
 def unblocked_two_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    condition = "2" + player.value
     simpleList = ultimate_board_state_to_unit_games(board)
-    total = 0
-    for simpleRow in simpleList:
-        for simpleGame in simpleRow:
-            total += _check_num_in_lines(simpleGame.get_board_copy(), player, 2, False)
-    return total
+    total_func = np.vectorize(lambda e: _check_num_in_lines(e, condition))
+    total = np.matrix(total_func(simpleList))
+
+    return total.sum()
 
 def block_opp_three_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
     # fliping the player because our call to check_consecutive checks if the player passed in has 2 in a row
+    condition = '1X2O' if player == PlayerType.X else '2X1O'
     simpleList = ultimate_board_state_to_unit_games(board)
-    total = 0
-    for simpleGame in simpleList:
-        simple_total = 0
-        if player == PlayerType.X:
-            simple_total += _check_num_in_lines(simpleGame, PlayerType.O, 2, True)
-        else: 
-            simple_total += _check_num_in_lines(simpleGame, PlayerType.X, 2, True) 
-        total += simple_total
+    total_func = np.vectorize(lambda e: _check_num_in_lines(e, condition))
+    total = np.matrix(total_func(simpleList))
+
+    return total.sum()
 
 def fork(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    condition = "2" + player.value
     simpleList = ultimate_board_state_to_unit_games(board)
-    total = 0
-    for simpleGame in simpleList:
-        if unblocked_two_in_line(simpleGame, player) >= 2:
-            total += 1
-    return total
+    total_func = np.vectorize(lambda e: _check_num_in_lines(e, condition))
+    def check_fork(result):
+        return 1 if result >= 2 else 0
+    convert = np.vectorize(check_fork)
+    total = np.matrix(convert(total_func(simpleList)))
+
+    return total.sum()
 
 def unblocked_one_in_line(board: UltimateBoardState, _: UltimateMove, player: PlayerType):
+    condition = "1" + player.value
     simpleList = ultimate_board_state_to_unit_games(board)
-    total = 0
-    for simpleGame in simpleList:
-        total += _check_num_in_lines(simpleGame, player, 1, False)
-    return total
+    total_func = np.vectorize(lambda e: _check_num_in_lines(e, condition))
+    total = np.matrix(total_func(simpleList))
 
-strictUltimateTicTacToe = UltimateTicTacToeFactory.emptyStrictGame()
-strictUltimateTicTacToe.make_move(((0, 0), (0, 0)))
-strictUltimateTicTacToe.make_move(((0, 0), (1,0)))
-strictUltimateTicTacToe.make_move(((1, 0), (1,0)))
-strictUltimateTicTacToe.make_move(((1, 0), (0,0)))
-strictUltimateTicTacToe.make_move(((0, 0), (0,1)))
-print(unblocked_two_in_line(strictUltimateTicTacToe.get_board_copy(), ((0, 0), (0, 1)), PlayerType.X))
+    return total.sum()
+

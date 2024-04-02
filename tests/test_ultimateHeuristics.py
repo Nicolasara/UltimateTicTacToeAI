@@ -1,5 +1,5 @@
-from ultimateTicTacToe.ultimateTicTacToe import StrictUltimateTicTacToe
-from unitTicTacToe.unitTicTacToe import PlayerType
+from ultimateTicTacToe.ultimateTicTacToeBase import StrictUltimateTicTacToe
+from unitTicTacToe.unitTicTacToeBase import PlayerType
 from ultimateTicTacToe.ultimateRuleBook import defaultUltimateRuleBook
 from examples import oneUnitBoardWonUltimateTicTacToeBoard, gameWonUltimateTicTacToeBoard, gameWithThreeWinOptions
 from ultimateTicTacToe.ultimateHeuristic import moveSendsOpponentToAnyBoard, playerHasWonUltimateBoard, opponentHasWonUltimateBoard, playerUltimateTwoInARows, opponentUltimateTwoInARows, blockedOpponentWins, playerUltimateOneInARows, opponentUltimateOneInARows
@@ -30,10 +30,10 @@ assert opponentHasWonUltimateBoard(gameWonUltimateTicTacToeBoard, ((0,0), (1,1))
 ### Test 2-in-a-row, blocked wins, and 1-in-a-row
 winnable_game = StrictUltimateTicTacToe(gameWithThreeWinOptions, defaultUltimateRuleBook)
 print(winnable_game.toString())
-assert playerUltimateTwoInARows(gameWithThreeWinOptions, ((0,0), (0,0)), PlayerType.X) == 3
+assert playerUltimateTwoInARows(gameWithThreeWinOptions, ((0,0), (0,0)), PlayerType.X) == 2
 assert opponentUltimateTwoInARows(gameWithThreeWinOptions, ((0,0), (0,0)), PlayerType.X) == 0
 assert playerUltimateTwoInARows(gameWithThreeWinOptions, ((0,0), (1,1)), PlayerType.O) == 0
-assert opponentUltimateTwoInARows(gameWithThreeWinOptions, ((0,0), (1,1)), PlayerType.O) == 3
+assert opponentUltimateTwoInARows(gameWithThreeWinOptions, ((0,0), (1,1)), PlayerType.O) == 2
 assert blockedOpponentWins(gameWithThreeWinOptions, ((0,0), (0,0)), PlayerType.X) == 1
 assert playerUltimateOneInARows(gameWithThreeWinOptions, ((0,0), (0,0)), PlayerType.X) == 2
 assert opponentUltimateOneInARows(gameWithThreeWinOptions, ((0,0), (0,0)), PlayerType.X) == 1

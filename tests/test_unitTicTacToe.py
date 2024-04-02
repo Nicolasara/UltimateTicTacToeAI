@@ -1,5 +1,5 @@
 from unitTicTacToe.ruleBook import defaultRuleBook, move_on_empty_cell, move_in_bounds, game_has_not_been_won
-from unitTicTacToe.unitTicTacToe import TicTacToe, TurnLessTicTacToe, TicTacToeFactory
+from unitTicTacToe.unitTicTacToeBase import TicTacToe, TurnLessTicTacToe, TicTacToeFactory
 from unitTicTacToe.unitTicTacToeTypes import BoardState, Move, CellState, PlayerType, Result
 from examples import emptyUnitBoard, tiedUnitBoard, wonUnitBoard, ticTacToeBoard1
 

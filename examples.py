@@ -28,6 +28,12 @@ lostUnitBoard = [
     [CellState.O, CellState.X, CellState.O]
 ]
 
+forkUnitBoard = [
+    [CellState.X, CellState.EMPTY, CellState.X],
+    [CellState.EMPTY, CellState.O, CellState.EMPTY],
+    [CellState.X, CellState.EMPTY, CellState.O]
+]
+
 emptyUnitBoard1 = [
     [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
     [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
@@ -125,6 +131,7 @@ ticTacToeBoard9 = [
     [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY],
     [CellState.EMPTY, CellState.EMPTY, CellState.EMPTY]
 ]
+
 ultimateTicTacToeBoard = [
     [ticTacToeBoard1, ticTacToeBoard2, ticTacToeBoard3],
     [ticTacToeBoard4, ticTacToeBoard5, ticTacToeBoard6],
@@ -135,6 +142,18 @@ oneUnitBoardWonUltimateTicTacToeBoard = [
     [wonUnitBoard, emptyUnitBoard, emptyUnitBoard],
     [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard],
     [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard]
+]
+
+twoUnitBoardWonUltimateTicTacToeBoard = [
+    [wonUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, wonUnitBoard]
+]
+
+twoUnitWinOneUnitLostUltimateTicTacToeBoard = [
+    [wonUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, lostUnitBoard],
+    [wonUnitBoard, emptyUnitBoard, emptyUnitBoard]
 ]
 
 gameWonUltimateTicTacToeBoard = [
@@ -149,3 +168,8 @@ gameWithThreeWinOptions = [
     [emptyUnitBoard, emptyUnitBoard, lostUnitBoard]
 ]
 
+twoUnitBoardFork = [
+    [forkUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [emptyUnitBoard, emptyUnitBoard, emptyUnitBoard],
+    [forkUnitBoard, emptyUnitBoard, emptyUnitBoard]
+]
