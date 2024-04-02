@@ -12,7 +12,7 @@ from unitTicTacToe.unitTicTacToeTypes import PlayerType
 UltimateHeuristic = Callable[[UltimateBoardState, UltimateMove, PlayerType], int]
 
 class UltimateBoardEvaluator:
-    def __init__(self, heuristics: list[UltimateHeuristic], weights: NDArray[np.float], readableNames: list[str]):
+    def __init__(self, heuristics: list[UltimateHeuristic], weights: NDArray[np.float64], readableNames: list[str]):
         if len(heuristics) != len(weights) or len(weights) != len(readableNames):
             raise ValueError("The number of heuristics, weights, and readable names must be the same")
         
@@ -33,7 +33,7 @@ class UltimateBoardEvaluatorBuilder:
         self.weights = []
         self.readableNames = []
         
-    def addHeuristic(self, heuristic: UltimateHeuristic, weight: np.float, readableName: str):
+    def addHeuristic(self, heuristic: UltimateHeuristic, weight: np.float64, readableName: str):
         self.heuristics.append(heuristic)
         self.weights.append(weight)
         self.readableNames.append(readableName)
@@ -41,7 +41,7 @@ class UltimateBoardEvaluatorBuilder:
     def get_weights(self):
         return self.weights
     
-    def build_copy(self, weights: NDArray[np.float]):
+    def build_copy(self, weights: NDArray[np.float64]):
         return UltimateBoardEvaluator(self.heuristics, weights, self.readableNames)
 
     def build(self) -> UltimateBoardEvaluator:

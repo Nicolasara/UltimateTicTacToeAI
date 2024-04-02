@@ -38,10 +38,10 @@ class UltimateTicTacToe:
     def toString() -> str:
         pass
     
-    def winner(self) -> PlayerType | None:
+    def winner(self) -> PlayerType:
         pass
   
-    def result() -> Result | None:
+    def result() -> Result:
         pass
 
 class StrictUltimateTicTacToe(UltimateTicTacToe):
@@ -94,11 +94,13 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         return self.winner() != None
     
     def is_game_over(self) -> bool:
+        print("has someone won: ", self.has_someone_won())
+        print("board full: ", self.is_board_full())
         hasSomeoneWon = self.has_someone_won()
         boardFull = self.is_board_full()
         return hasSomeoneWon or boardFull
     
-    def winner(self) -> PlayerType | None:
+    def winner(self) -> PlayerType:
         xThreesInARow = 0
         oThreesInARow = 0
         threesInARow = get_threes_in_a_row(self.unitGames)
@@ -118,7 +120,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         else:
             raise Exception("There should only be one winner, but the board seems to have multiple winners.")
         
-    def result(self) -> Result | None:
+    def result(self) -> Result:
         if not self.is_game_over():
             return None
         elif self.winner() == PlayerType.X:
