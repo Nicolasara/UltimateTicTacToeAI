@@ -122,16 +122,12 @@ class TurnLessTicTacToe(TicTacToe):
         boardFull = self.is_board_full()
         return hasSomeoneWon or boardFull
     
-    def winner(self) -> PlayerType:
-        xThreesInARow = 0
-        oThreesInARow = 0
+    def winner(self) -> PlayerType | None:
         threesInARow = get_threes_in_a_row(self.get_board_copy())
-        for cells in threesInARow:
-            if is_wining_three_in_a_row(cells):
-                if cells[0] == CellState.X.value:
-                    xThreesInARow += 1
-                else:
-                    oThreesInARow += 1
+        with ThreadPoolExecutor(max_workers=len(threesInARow)) as executor:
+            winningThreeInARow = list(executor.map(is_wining_three_in_a_row, threesInARow))
+            xThreesInARow = np.sum((threesInARow[winningThreeInARow][:, 0] == CellState.X.value))
+            oThreesInARow = np.sum((threesInARow[winningThreeInARow][:, 0] == CellState.O.value)) 
         
         if xThreesInARow == 0 and oThreesInARow == 0:
             return None
@@ -152,15 +148,8 @@ class TurnLessTicTacToe(TicTacToe):
         else:
             return Result.DRAW
 
-
-        
     def is_board_full(self) -> bool:
-        for row in self.board:
-            for cell in row:
-                if cell == CellState.EMPTY.value:
-                    return False
-        return True
-    
+        return CellState.EMPTY.value not in self.board
     
     def toString(self) -> str:
         boardString = ""
@@ -168,8 +157,6 @@ class TurnLessTicTacToe(TicTacToe):
         #if there is winner, print it surrounded by spaces
         if self.is_game_over():
             winner = self.winner() if self.winner() != None else "-"
-            print(winner)
-            print(self.get_board_copy())
             for t in range(5):
                 if t == 2:
                     boardString += " " * 5 + winner.value + " " * 5 + "\n"
