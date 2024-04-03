@@ -5,7 +5,7 @@ from player import Player
 from concurrent.futures import ProcessPoolExecutor
 
 # play a game between two AI players and return the winner
-def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False):
+def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False, depth: int = 2):
     # new board state 
     game = UltimateTicTacToeFactory.emptyStrictGame()
 
@@ -20,10 +20,13 @@ def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, 
         move = None
         turn = game.get_turn()
         if turn == PlayerType.X:
-            move = playerX.best_move(game)
+            move = playerX.best_move(game, depth)
         else:
-            move = playerO.best_move(game)
+            move = playerO.best_move(game, depth)
         #assumes that the move is valid!
+        #print('test')
+        #print(game.possible_moves())
+        #print(move)
         game.make_move(move)
         if print_game:
             print(turn.value + " moves: " + str(move) + "\n")
@@ -34,13 +37,13 @@ def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, 
     return winner
 
 # play a game between an AI player and a manual player
-def playAManualGame(AIplayerX: Player):
+def playAManualGame(AIplayerX: Player, depth: int):
     game = UltimateTicTacToeFactory.emptyStrictGame()
     while not game.is_game_over():
         move = None
         turn = game.get_turn()
         if turn == PlayerType.X:
-            move = AIplayerX.best_move(game)
+            move = AIplayerX.best_move(game, depth)
         else:
             print("Enter your move: ")
             
@@ -64,7 +67,7 @@ def playAManualGame(AIplayerX: Player):
     return winner
 
 # play a set of games between two AI and return the number of wins for each player
-def playManyGames(playerX: Player, playerO: Player, num_games):
+def playManyGames(playerX: Player, playerO: Player, num_games, depth: int):
     playerX_wins = 0
     playerO_wins = 0
     for i in range(num_games):
@@ -76,7 +79,7 @@ def playManyGames(playerX: Player, playerO: Player, num_games):
     return (playerX_wins, playerO_wins)
 
 # play a set of 81 games starting with the 81 unique first moves possible.
-def playAllFirstMoves(playerX: Player, playerO: Player):
+def playAllFirstMoves(playerX: Player, playerO: Player, depth: int):
     playerX_wins = 0
     playerO_wins = 0
     for i in range(3):
@@ -91,7 +94,7 @@ def playAllFirstMoves(playerX: Player, playerO: Player):
                         playerO_wins += 1
     return (playerX_wins, playerO_wins)
 
-def playAllFirstMovesAsync(playerX: Player, playerO: Player):
+def playAllFirstMovesAsync(playerX: Player, playerO: Player, depth: int):
     result_counts = {'X': 0, 'O': 0, "Tie": 0}
 
     # create a list of all possible first moves
