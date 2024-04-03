@@ -2,7 +2,7 @@ from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe, UltimateT
 from unitTicTacToe.unitTicTacToeTypes import PlayerType
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateMove
 from player import Player
-from concurrent.futures import ProcessPoolExecutor
+from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 
 # play a game between two AI players and return the winner
 def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False):
@@ -31,6 +31,7 @@ def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, 
     winner = game.winner().value if game.winner() != None else "Tie"
     if print_game:
         print("Game over. Winner: " + winner + "\n")
+    print("First move: " + str(firstMove) + " Winner: " + winner)
     return winner
 
 # play a game between an AI player and a manual player
@@ -98,7 +99,7 @@ def playAllFirstMovesAsync(playerX: Player, playerO: Player):
     first_moves = [((a,b),(c,d)) for a in range(3) for b in range(3) for c in range(3) for d in range(3)]
 
     # play all games asynchronously
-    with ProcessPoolExecutor(max_workers=4) as executor:
+    with ThreadPoolExecutor(max_workers=4) as executor:
         results = executor.map(lambda move: playAGame(playerX, playerO, move), first_moves)
     
     # count the results
