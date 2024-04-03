@@ -19,7 +19,7 @@ class Player:
         self.evaluator = board_evaluator
         self.maximizing = maximizing
     
-    def best_move(self, game, depth=1) -> TwoDimensionalMove:
+    def best_move(self, game, depth) -> TwoDimensionalMove:
         _, move = minimax(game, self.evaluator, depth, self.maximizing, True)
         return move
     

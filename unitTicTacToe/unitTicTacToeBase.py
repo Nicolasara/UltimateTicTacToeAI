@@ -122,7 +122,7 @@ class TurnLessTicTacToe(TicTacToe):
         boardFull = self.is_board_full()
         return hasSomeoneWon or boardFull
     
-    def winner(self) -> PlayerType | None:
+    def winner(self) -> PlayerType:
         threesInARow = get_threes_in_a_row(self.get_board_copy())
         with ThreadPoolExecutor(max_workers=len(threesInARow)) as executor:
             winningThreeInARow = list(executor.map(is_wining_three_in_a_row, threesInARow))
