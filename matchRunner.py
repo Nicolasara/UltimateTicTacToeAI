@@ -2,7 +2,8 @@ from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe, UltimateT
 from unitTicTacToe.unitTicTacToeTypes import PlayerType
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateMove
 from player import Player
-from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor
+from multiprocessing import Pool
 
 # play a game between two AI players and return the winner
 def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False):
@@ -31,7 +32,6 @@ def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, 
     winner = game.winner().value if game.winner() != None else "Tie"
     if print_game:
         print("Game over. Winner: " + winner + "\n")
-    print("First move: " + str(firstMove) + " Winner: " + winner)
     return winner
 
 # play a game between an AI player and a manual player
@@ -92,7 +92,7 @@ def playAllFirstMoves(playerX: Player, playerO: Player):
                         playerO_wins += 1
     return (playerX_wins, playerO_wins)
 
-def playAllFirstMovesAsync(playerX: Player, playerO: Player):
+def playAllFirstMovesThreadPool(playerX: Player, playerO: Player):
     result_counts = {'X': 0, 'O': 0, "Tie": 0}
 
     # create a list of all possible first moves
@@ -107,3 +107,31 @@ def playAllFirstMovesAsync(playerX: Player, playerO: Player):
         result_counts[result] += 1
     
     return (result_counts['X'], result_counts['O'])
+
+def playAllFirstMovesPool(playerX: Player, playerO: Player, workers: int):
+    result_counts = {'X': 0, 'O': 0, "Tie": 0}
+
+    #make a lambda method to play the game with the two given players
+    game_player = GamePlayer(playerX, playerO)
+
+    # create a list of all possible first moves
+    first_moves = [((a,b),(c,d)) for a in range(3) for b in range(3) for c in range(3) for d in range(3)]
+
+    # play all games using a pool
+    with Pool(workers) as pool:
+        results = pool.map(game_player, first_moves)
+    
+    # count the results
+    for result in results:
+        result_counts[result] += 1
+    
+    return (result_counts['X'], result_counts['O'])
+
+#function object for playAGame
+class GamePlayer:
+    def __init__(self, playerX, playerO):
+        self.playerX = playerX
+        self.playerO = playerO
+
+    def __call__(self, firstMove):
+        return playAGame(self.playerX, self.playerO, firstMove)
