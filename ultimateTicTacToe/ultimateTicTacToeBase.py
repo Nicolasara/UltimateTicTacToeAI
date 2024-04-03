@@ -1,4 +1,6 @@
 from abc import abstractmethod
+import numpy as np
+from concurrent.futures import ThreadPoolExecutor
 from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, CellState
 from unitTicTacToe.unitTicTacToeBase import TicTacToe, TurnLessTicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as defaultUnitRuleBook
@@ -62,7 +64,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         row1Copy = self.get_ultimate_board_row_copy(0)
         row2Copy = self.get_ultimate_board_row_copy(1)
         row3Copy = self.get_ultimate_board_row_copy(2)
-        return [row1Copy, row2Copy, row3Copy]
+        return np.array([row1Copy, row2Copy, row3Copy])
     
     def make_move(self, move: UltimateMove):
         if (self.ruleBook.is_valid(self.get_board_copy(), move, self.pastMove)):
@@ -130,18 +132,17 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
             return Result.DRAW
     
     def get_ultimate_board_row_copy(self, row: int) -> list[TicTacToe]:
-        return [game.get_board_copy() for game in self.unitGames[row]]
+        return np.array([game.get_board_copy() for game in self.unitGames[row]])
     
     def rotate_turn(self):
         self.turn = PlayerType.X if self.turn == PlayerType.O else PlayerType.O
 
-    def is_board_full(self) -> bool:        
-        for row in self.unitGames:
-            for game in row:
-                if game.has_someone_won():
-                    continue
-                elif not game.is_board_full():
-                    return False
+    def is_board_full(self) -> bool:
+        flattenedGames = [game for row in self.unitGames for game in row]
+        with ThreadPoolExecutor() as executor:
+            isBoardFull = list(executor.map(lambda game: game.is_board_full(), flattenedGames))
+            if not any(isBoardFull):
+                return False
         return True
 
     def toString(self) -> str:
