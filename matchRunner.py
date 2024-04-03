@@ -2,8 +2,7 @@ from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe, UltimateT
 from unitTicTacToe.unitTicTacToeTypes import PlayerType
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateMove
 from player import Player
-
-from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluatorFactory
+from concurrent.futures import ProcessPoolExecutor
 
 # play a game between two AI players and return the winner
 def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False):
@@ -29,9 +28,9 @@ def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, 
         if print_game:
             print(turn.value + " moves: " + str(move) + "\n")
             print(game.toString())
-    winner = game.winner() if game.winner() != None else "Tie"
+    winner = game.winner().value if game.winner() != None else "Tie"
     if print_game:
-        print("Game over. Winner: " + winner.value + "\n")
+        print("Game over. Winner: " + winner + "\n")
     return winner
 
 # play a game between an AI player and a manual player
@@ -60,8 +59,8 @@ def playAManualGame(AIplayerX: Player):
         game.make_move(move)
         print(turn.value + " moves: " + str(move) + "\n")    
         print(game.toString())
-    winner = game.winner() if game.winner() != None else "Tie"
-    print("Game over. Winner: " + winner.value + "\n")
+    winner = game.winner().value if game.winner() != None else "Tie"
+    print("Game over. Winner: " + winner + "\n")
     return winner
 
 # play a set of games between two AI and return the number of wins for each player
@@ -91,3 +90,19 @@ def playAllFirstMoves(playerX: Player, playerO: Player):
                     elif winner == PlayerType.O:
                         playerO_wins += 1
     return (playerX_wins, playerO_wins)
+
+def playAllFirstMovesAsync(playerX: Player, playerO: Player):
+    result_counts = {'X': 0, 'O': 0, "Tie": 0}
+
+    # create a list of all possible first moves
+    first_moves = [((a,b),(c,d)) for a in range(3) for b in range(3) for c in range(3) for d in range(3)]
+
+    # play all games asynchronously
+    with ProcessPoolExecutor(max_workers=4) as executor:
+        results = executor.map(lambda move: playAGame(playerX, playerO, move), first_moves)
+    
+    # count the results
+    for result in results:
+        result_counts[result] += 1
+    
+    return (result_counts['X'], result_counts['O'])

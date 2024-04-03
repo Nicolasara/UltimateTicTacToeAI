@@ -135,10 +135,12 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     def rotate_turn(self):
         self.turn = PlayerType.X if self.turn == PlayerType.O else PlayerType.O
 
-    def is_board_full(self) -> bool:
+    def is_board_full(self) -> bool:        
         for row in self.unitGames:
             for game in row:
-                if not game.is_board_full():
+                if game.has_someone_won():
+                    continue
+                elif not game.is_board_full():
                     return False
         return True
 
