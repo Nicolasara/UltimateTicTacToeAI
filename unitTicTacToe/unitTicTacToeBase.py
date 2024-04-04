@@ -87,7 +87,7 @@ class TurnLessTicTacToe(TicTacToe):
 
     def __init__(self, board: BoardState, ruleBook: RuleBook):
         super().__init__()
-        self.board = board
+        self.board = format_board(board)
         self.ruleBook = ruleBook
 
     def get_turn(self) -> PlayerType:
@@ -209,3 +209,13 @@ class TicTacToeFactory:
     @staticmethod
     def turn_less_game_from_board(board: BoardState) -> TicTacToe:
         return TurnLessTicTacToe(board, defaultRuleBook)
+
+def format_board(board) -> BoardState:
+    formatted_board = np.full((3,3), CellState.EMPTY.value)
+    for i in range(3):
+        for j in range(3):
+            if board[i][j] == CellState.X.value:
+                formatted_board[i][j] = CellState.X.value
+            elif board[i][j] == CellState.O.value:
+                formatted_board[i][j] = CellState.O.value
+    return formatted_board
