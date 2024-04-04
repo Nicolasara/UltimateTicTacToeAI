@@ -9,8 +9,5 @@ playerX = Player(e, True)
 playerO = Player(e, False)
 
 currentTime = time()
-
-# playAManualGame(playerX)
-playAGame(playerX, playerO, None, True, 2)
-
+playAGame(playerX, playerO, None, False, 2)
 print("Time: " + str(time() - currentTime))

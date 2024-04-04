@@ -51,12 +51,11 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     """
     def __init__(self, board: UltimateBoardState, ruleBook: UltimateRuleBook = defaultUltimateRuleBook, turn: PlayerType = PlayerType.X):
         super().__init__()  
-        board = format_board(board)
         self.unitGames = ultimate_board_state_to_unit_games(board)
         self.ruleBook = ruleBook
         self.turn = turn
         self.pastMove = None
-        self.board = board
+        self.board = self.generate_board()
         self.cached_winner = "Null"
         self.cached_is_board_full = None
         self.cached_possible_moves = None
@@ -65,9 +64,12 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         return self.turn
     
     def get_board_copy(self) -> UltimateBoardState:
-        row1Copy = self.get_ultimate_board_row_copy(0)
-        row2Copy = self.get_ultimate_board_row_copy(1)
-        row3Copy = self.get_ultimate_board_row_copy(2)
+        return np.copy(self.board)
+
+    def generate_board(self) -> UltimateBoardState:
+        row1Copy = self.generate_board_row(0)
+        row2Copy = self.generate_board_row(1)
+        row3Copy = self.generate_board_row(2)
         return np.array([row1Copy, row2Copy, row3Copy])
     
     def make_move(self, move: UltimateMove):
@@ -77,7 +79,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
             unitGame = self.unitGames[ultimateMove[0]][ultimateMove[1]]
             unitGame.make_move(unitMove, self.turn)
             self.pastMove = move
-            self.board = self.get_board_copy()
+            self.board = self.generate_board()
             self.rotate_turn()
             self.cached_winner = "Null"
             self.cached_is_board_full = None
@@ -103,30 +105,29 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         return correctRow and correctColumn
 
     def move_valid(self, move: UltimateMove) -> bool:
-        followsUnitRules = self.move_follows_default_unit_rules(move)
-        movesOnCorrectUnitBoard = self.move_on_correct_unit_board(move)
-        return followsUnitRules and movesOnCorrectUnitBoard
+        return self.move_follows_default_unit_rules(move) and self.move_on_correct_unit_board(move)
 
     def possible_moves(self) -> list[UltimateMove]:
         if self.cached_possible_moves != None:
             return self.cached_possible_moves
-        possibleFirstDimensions = []
-        possibleSecondDimensions = []
-        for i in range(3):
-            for j in range(3):
-                possibleFirstDimensions.append((i, j))
-                possibleSecondDimensions.append((i, j))
         
-        if self.pastMove != None and not self.unitGames[self.pastMove[1][0]][self.pastMove[1][1]].is_game_over():
-            possibleFirstDimensions = [self.pastMove[1]]
-
+        possibleGames = []
+        if self.pastMove == None or self.unitGames[self.pastMove[1][0]][self.pastMove[1][1]].is_game_over():
+            for i in range(3):
+                row = self.unitGames[i]
+                for j in range(3):
+                    game = row[j]
+                    if not game.is_game_over():
+                        possibleGames.append((game, (i, j)))
+        else:
+            unitGame = self.unitGames[self.pastMove[1][0]][self.pastMove[1][1]]
+            firstDimension = self.pastMove[1]
+            possibleGames = [(unitGame, firstDimension)]
+        
         possibleMoves = []
-        for possibleFirstDimension in possibleFirstDimensions:
-            for possibleSecondDimension in possibleSecondDimensions:
-                move = (possibleFirstDimension, possibleSecondDimension)
-                if self.move_valid(move):
-                    possibleMoves.append(move)
-
+        for game, firstDimension in possibleGames:
+            for secondDimension in game.possible_moves():
+                possibleMoves.append((firstDimension, secondDimension))
         self.cached_possible_moves = possibleMoves
         return possibleMoves
     
@@ -137,34 +138,25 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         return self.winner() != None
     
     def is_game_over(self) -> bool:
-        hasSomeoneWon = self.has_someone_won()
-        boardFull = self.is_board_full()
-        return hasSomeoneWon or boardFull
+        return self.has_someone_won() or self.is_board_full()
     
     def winner(self) -> PlayerType:
         if self.cached_winner != "Null":
             return self.cached_winner
-        xThreesInARow = 0
-        oThreesInARow = 0
         threesInARow = get_threes_in_a_row(self.unitGames)
         for games in threesInARow:
             if is_wining_three_in_a_row(games):
                 if games[0].winner() == PlayerType.X:
-                    xThreesInARow += 1
+                    self.cached_winner = PlayerType.X
+                    return PlayerType.X
+                elif games[0].winner() == PlayerType.O:
+                    self.cached_winner = PlayerType.O
+                    return PlayerType.O
                 else:
-                    oThreesInARow += 1
+                    raise Exception("Invalid cell state.")
 
-        if xThreesInARow == 0 and oThreesInARow == 0:
-            self.cached_winner = None
-            return None
-        elif xThreesInARow == 0:
-            self.cached_winner = PlayerType.O
-            return PlayerType.O
-        elif oThreesInARow == 0:
-            self.cached_winner = PlayerType.X
-            return PlayerType.X
-        else:
-            raise Exception("There should only be one winner, but the board seems to have multiple winners.")
+        self.cached_winner = None
+        return None
         
     def result(self) -> Result:
         if not self.is_game_over():
@@ -176,8 +168,8 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         else:
             return Result.DRAW
     
-    def get_ultimate_board_row_copy(self, row: int) -> list[TicTacToe]:
-        return np.array([game.get_board_copy() for game in self.unitGames[row]])
+    def generate_board_row(self, row: int) -> list[TicTacToe]:
+        return np.array([game.board for game in self.unitGames[row]])
     
     def rotate_turn(self):
         self.turn = PlayerType.X if self.turn == PlayerType.O else PlayerType.O

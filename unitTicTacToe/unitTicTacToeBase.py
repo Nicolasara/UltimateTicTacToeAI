@@ -118,6 +118,8 @@ class TurnLessTicTacToe(TicTacToe):
         return onEmptyCell and gameNotOver
 
     def possible_moves(self) -> list[Move]:
+        if self.is_game_over():
+            return []
         if self.cached_possible_moves != None:
             return self.cached_possible_moves
         moves = np.array(np.meshgrid(np.arange(BoardSize), np.arange(BoardSize))).T.reshape(-1, 2)
@@ -128,33 +130,25 @@ class TurnLessTicTacToe(TicTacToe):
         return self.winner() != None
 
     def is_game_over(self) -> bool:
-        hasSomeoneWon = self.has_someone_won()
-        boardFull = self.is_board_full()
-        return hasSomeoneWon or boardFull
+        return self.is_board_full() or self.has_someone_won()
     
     def winner(self) -> PlayerType:
         if self.cached_winner != "Null":
             return self.cached_winner
-        xThreesInARow = 0
-        oThreesInARow = 0
-        threesInARow = get_threes_in_a_row(self.get_board_copy())
-        for cells in threesInARow:
-            if is_wining_three_in_a_row(cells):
-                if cells[0] == CellState.X.value:
-                    xThreesInARow += 1
+        threesInARow = get_threes_in_a_row(self.board)
+        for threeInARow in threesInARow:
+            if is_wining_three_in_a_row(threeInARow):
+                if threeInARow[0] == CellState.X.value:
+                    self.cached_winner = PlayerType.X
+                    return PlayerType.X
+                elif threeInARow[0] == CellState.O.value:
+                    self.cached_winner = PlayerType.O
+                    return PlayerType.O
                 else:
-                    oThreesInARow += 1
-        if xThreesInARow == 0 and oThreesInARow == 0:
-            self.cached_winner = None
-            return None
-        elif xThreesInARow == 0:
-            self.cached_winner = PlayerType.O
-            return PlayerType.O
-        elif oThreesInARow == 0:
-            self.cached_winner = PlayerType.X
-            return PlayerType.X
-        else:
-            raise Exception("There should only be one winner, but the board seems to have multiple winners.")
+                    raise Exception("Invalid cell state.")
+                    
+        self.cached_winner = None
+        return None
 
     def result(self) -> Result:
         if not self.is_game_over():

@@ -9,7 +9,7 @@ from unitTicTacToe.unitTicTacToeTypes import BoardState, CellState, PlayerType
 def _check_num_in_lines(game: TicTacToe, condition: str):
     sum_dict = {0:"empty", 1: "1X", 2: "2X", 3: "3X", 5:"1O", 6:"1X1O", 7:"2X1O", 10:"2O", 11:"1X2O", 15:"3O"}
     value_arr_func = np.vectorize(lambda e: e)
-    value_arr = value_arr_func(game.get_board_copy())
+    value_arr = value_arr_func(game.board)
     result = 0
 
     # check for horizontal consecutive
