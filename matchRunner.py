@@ -3,9 +3,10 @@ from unitTicTacToe.unitTicTacToeTypes import PlayerType
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateMove
 from player import Player
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
+from multiprocessing import Pool
 
 # play a game between two AI players and return the winner
-def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False):
+def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False, depth: int = 2):
     # new board state 
     game = UltimateTicTacToeFactory.emptyStrictGame()
 
@@ -20,9 +21,9 @@ def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, 
         move = None
         turn = game.get_turn()
         if turn == PlayerType.X:
-            move = playerX.best_move(game)
+            move = playerX.best_move(game, depth)
         else:
-            move = playerO.best_move(game)
+            move = playerO.best_move(game, depth)
         #assumes that the move is valid!
         game.make_move(move)
         if print_game:
@@ -31,17 +32,28 @@ def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, 
     winner = game.winner().value if game.winner() != None else "Tie"
     if print_game:
         print("Game over. Winner: " + winner + "\n")
-    print("First move: " + str(firstMove) + " Winner: " + winner)
+    # print("First move: " + str(firstMove) + " Winner: " + winner)
     return winner
 
+
+# function object for playAGame. Used for threading because multiprocessing Pool does not support lambda functions.
+class GamePlayer:
+    def __init__(self, playerX, playerO, depth):
+        self.playerX = playerX
+        self.playerO = playerO
+        self.depth = depth
+
+    def __call__(self, firstMove):
+        return playAGame(self.playerX, self.playerO, firstMove, False, self.depth)
+
 # play a game between an AI player and a manual player
-def playAManualGame(AIplayerX: Player):
+def playAManualGame(AIplayerX: Player, depth: int = 2):
     game = UltimateTicTacToeFactory.emptyStrictGame()
     while not game.is_game_over():
         move = None
         turn = game.get_turn()
         if turn == PlayerType.X:
-            move = AIplayerX.best_move(game)
+            move = AIplayerX.best_move(game, depth)
         else:
             print("Enter your move: ")
             
@@ -64,6 +76,29 @@ def playAManualGame(AIplayerX: Player):
     print("Game over. Winner: " + winner + "\n")
     return winner
 
+# play a set of 81 games starting with the 81 unique first moves possible.
+# uses multiprocessing pool to play games in parallel.
+# best performance so far. 
+def playAllFirstMovesPool(playerX: Player, playerO: Player, depth: int = 2, workers: int = 81):
+    result_counts = {'X': 0, 'O': 0, "Tie": 0}
+
+    #make a lambda method to play the game with the two given players
+    game_player = GamePlayer(playerX, playerO, depth)
+
+    # create a list of all possible first moves
+    first_moves = [((a,b),(c,d)) for a in range(3) for b in range(3) for c in range(3) for d in range(3)]
+    # play all games using a pool
+    with Pool(workers) as pool:
+        results = pool.map(game_player, first_moves)
+    
+    # count the results
+    for result in results:
+        result_counts[result] += 1
+
+    #return X and O wins
+    return (result_counts['X'], result_counts['O'])
+
+'''
 # play a set of games between two AI and return the number of wins for each player
 def playManyGames(playerX: Player, playerO: Player, num_games):
     playerX_wins = 0
@@ -76,6 +111,7 @@ def playManyGames(playerX: Player, playerO: Player, num_games):
             playerO_wins += 1
     return (playerX_wins, playerO_wins)
 
+# DEPRECATED
 # play a set of 81 games starting with the 81 unique first moves possible.
 def playAllFirstMoves(playerX: Player, playerO: Player):
     playerX_wins = 0
@@ -92,6 +128,7 @@ def playAllFirstMoves(playerX: Player, playerO: Player):
                         playerO_wins += 1
     return (playerX_wins, playerO_wins)
 
+# DEPRECATED
 def playAllFirstMovesAsync(playerX: Player, playerO: Player):
     result_counts = {'X': 0, 'O': 0, "Tie": 0}
 
@@ -107,3 +144,4 @@ def playAllFirstMovesAsync(playerX: Player, playerO: Player):
         result_counts[result] += 1
     
     return (result_counts['X'], result_counts['O'])
+'''
