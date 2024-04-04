@@ -1,4 +1,3 @@
-from concurrent.futures import ThreadPoolExecutor
 import numpy as np
 from typing import Callable
 from numpy.typing import NDArray
@@ -22,9 +21,11 @@ class UltimateBoardEvaluator:
 
     def evaluate(self, board: UltimateBoardState, move: UltimateMove, player: PlayerType) -> int:
         heuristicCount = len(self.heuristics)
-        with ThreadPoolExecutor(max_workers=heuristicCount) as executor:
-            scores = np.array(list(executor.map(lambda h: h(board, move, player), self.heuristics)))
-            return scores @ self.weights
+        scores = np.zeros(heuristicCount, dtype=int32)
+        for i in range(heuristicCount):
+            heuristic = self.heuristics[i]
+            scores[i] = heuristic(board, move, player)
+        return scores @ self.weights
         
 
 class UltimateBoardEvaluatorBuilder:

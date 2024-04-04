@@ -89,6 +89,9 @@ class TurnLessTicTacToe(TicTacToe):
         super().__init__()
         self.board = board
         self.ruleBook = ruleBook
+        self.cached_winner = "Null"
+        self.cached_is_board_full = None
+        self.cached_possible_moves = None
 
     def get_turn(self) -> PlayerType:
         raise Exception("This implementation does not have a turn.")
@@ -97,22 +100,29 @@ class TurnLessTicTacToe(TicTacToe):
         return np.copy(self.board)
     
     def make_move(self, move: Move, player: PlayerType):
-        if (self.ruleBook.is_valid(self.get_board_copy(), move)):
+        if (self.move_valid(move)):
             if (player == PlayerType.X):
                 cellState = CellState.X.value
             else:   
                 cellState = CellState.O.value
             self.board[move[0]][move[1]] = cellState
+            self.cached_winner = "Null"
+            self.cached_is_board_full = None
+            self.cached_possible_moves = None
         else:
             raise Exception("Invalid move.")
 
+    def move_valid(self, move: Move) -> bool:
+        onEmptyCell = self.board[move[0]][move[1]] == CellState.EMPTY.value
+        gameNotOver = not self.is_game_over()
+        return onEmptyCell and gameNotOver
+
     def possible_moves(self) -> list[Move]:
+        if self.cached_possible_moves != None:
+            return self.cached_possible_moves
         moves = np.array(np.meshgrid(np.arange(BoardSize), np.arange(BoardSize))).T.reshape(-1, 2)
-        totalTiles = BoardSize * BoardSize
-        with ThreadPoolExecutor(max_workers=totalTiles) as executor:
-            validMoves = list(executor.map(lambda move: self.ruleBook.is_valid(self.get_board_copy(), move), moves))
-            validMoves = np.array([moves[i] for i in range(len(validMoves)) if validMoves[i]])
-            return list(validMoves)
+        validMoves = [move for move in moves if self.move_valid(move)]
+        return validMoves
     
     def has_someone_won(self) -> bool:
         return self.winner() != None
@@ -123,6 +133,8 @@ class TurnLessTicTacToe(TicTacToe):
         return hasSomeoneWon or boardFull
     
     def winner(self) -> PlayerType:
+        if self.cached_winner != "Null":
+            return self.cached_winner
         xThreesInARow = 0
         oThreesInARow = 0
         threesInARow = get_threes_in_a_row(self.get_board_copy())
@@ -132,12 +144,14 @@ class TurnLessTicTacToe(TicTacToe):
                     xThreesInARow += 1
                 else:
                     oThreesInARow += 1
-        
         if xThreesInARow == 0 and oThreesInARow == 0:
+            self.cached_winner = None
             return None
         elif xThreesInARow == 0:
+            self.cached_winner = PlayerType.O
             return PlayerType.O
         elif oThreesInARow == 0:
+            self.cached_winner = PlayerType.X
             return PlayerType.X
         else:
             raise Exception("There should only be one winner, but the board seems to have multiple winners.")
@@ -152,15 +166,12 @@ class TurnLessTicTacToe(TicTacToe):
         else:
             return Result.DRAW
 
-
-        
     def is_board_full(self) -> bool:
-        for row in self.board:
-            for cell in row:
-                if cell == CellState.EMPTY.value:
-                    return False
-        return True
-    
+        if self.cached_is_board_full != None:
+            return self.cached_is_board_full
+        boardFull = CellState.EMPTY.value not in self.board
+        self.cached_is_board_full = boardFull
+        return boardFull
     
     def toString(self) -> str:
         boardString = ""
@@ -168,8 +179,6 @@ class TurnLessTicTacToe(TicTacToe):
         #if there is winner, print it surrounded by spaces
         if self.is_game_over():
             winner = self.winner() if self.winner() != None else "-"
-            print(winner)
-            print(self.get_board_copy())
             for t in range(5):
                 if t == 2:
                     boardString += " " * 5 + winner.value + " " * 5 + "\n"
@@ -222,3 +231,13 @@ class TicTacToeFactory:
     @staticmethod
     def turn_less_game_from_board(board: BoardState) -> TicTacToe:
         return TurnLessTicTacToe(board, defaultRuleBook)
+
+# def format_board(board) -> BoardState:
+#     formatted_board = np.full((3,3), CellState.EMPTY.value)
+#     for i in range(3):
+#         for j in range(3):
+#             if board[i][j] == CellState.X.value:
+#                 formatted_board[i][j] = CellState.X.value
+#             elif board[i][j] == CellState.O.value:
+#                 formatted_board[i][j] = CellState.O.value
+#     return formatted_board

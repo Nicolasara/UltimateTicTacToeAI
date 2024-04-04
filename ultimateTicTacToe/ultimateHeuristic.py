@@ -5,6 +5,8 @@ from unitTicTacToe.unitTicTacToeBase import PlayerType
 from ultimateTicTacToe.ultimateRuleBook import defaultUltimateRuleBook
 import math
 
+INFINITY = 147483648
+
 def _check_num_in_ultimate_lines(board: UltimateBoardState, condition: str):
     result = 0
     unit_games = ultimate_board_state_to_unit_games(board)
@@ -51,13 +53,13 @@ def _check_num_in_ultimate_lines(board: UltimateBoardState, condition: str):
 def XWinsUltimateGame(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
     game = StrictUltimateTicTacToe(board, defaultUltimateRuleBook)
     if game.winner() == PlayerType.X:
-        return math.inf
+        return INFINITY
     return 0
 
 def OWinsUltimateGame(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
     game = StrictUltimateTicTacToe(board, defaultUltimateRuleBook)
     if game.winner() == PlayerType.O:
-        return -math.inf
+        return -INFINITY
     return 0
 
 # ### 1 if the player has won the board, 0 otherwise
