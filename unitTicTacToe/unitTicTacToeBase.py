@@ -100,7 +100,7 @@ class TurnLessTicTacToe(TicTacToe):
         return np.copy(self.board)
     
     def make_move(self, move: Move, player: PlayerType):
-        if (self.ruleBook.is_valid(self.get_board_copy(), move)):
+        if (self.move_valid(move)):
             if (player == PlayerType.X):
                 cellState = CellState.X.value
             else:   
@@ -112,13 +112,18 @@ class TurnLessTicTacToe(TicTacToe):
         else:
             raise Exception("Invalid move.")
 
+    def move_valid(self, move: Move) -> bool:
+        onEmptyCell = self.board[move[0]][move[1]] == CellState.EMPTY.value
+        gameNotOver = not self.is_game_over()
+        return onEmptyCell and gameNotOver
+
     def possible_moves(self) -> list[Move]:
         if self.cached_possible_moves != None:
             return self.cached_possible_moves
         moves = np.array(np.meshgrid(np.arange(BoardSize), np.arange(BoardSize))).T.reshape(-1, 2)
         totalTiles = BoardSize * BoardSize
         with ThreadPoolExecutor(max_workers=totalTiles) as executor:
-            validMoves = list(executor.map(lambda move: self.ruleBook.is_valid(self.get_board_copy(), move), moves))
+            validMoves = list(executor.map(lambda move: self.move_valid(move), moves))
             validMoves = np.array([moves[i] for i in range(len(validMoves)) if validMoves[i]])
             self.cached_possible_moves = validMoves
             return list(validMoves)

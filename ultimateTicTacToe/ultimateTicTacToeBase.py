@@ -2,12 +2,11 @@ from abc import abstractmethod
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 from unitTicTacToe.unitTicTacToeTypes import PlayerType, Result, CellState
-from unitTicTacToe.unitTicTacToeBase import TicTacToe, TurnLessTicTacToe
+from unitTicTacToe.unitTicTacToeBase import TicTacToe, TicTacToeFactory, TurnLessTicTacToe
 from unitTicTacToe.ruleBook import defaultRuleBook as defaultUnitRuleBook
 from ultimateTicTacToe.UnitGamesUtils import get_threes_in_a_row, is_wining_three_in_a_row
 from ultimateTicTacToe.ultimateRuleBook import UltimateRuleBook, defaultUltimateRuleBook
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove, UnitGames
-import numpy as np
 
 # UltimateTicTacToe interface
 class UltimateTicTacToe:
@@ -69,27 +68,56 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         return np.array([row1Copy, row2Copy, row3Copy])
     
     def make_move(self, move: UltimateMove):
-        if (self.ruleBook.is_valid(self.get_board_copy(), move, self.pastMove)):
+        if (self.ruleBook.is_valid(self.board, move, self.pastMove)):
             ultimateMove = move[0]
             unitMove = move[1]
             unitGame = self.unitGames[ultimateMove[0]][ultimateMove[1]]
             unitGame.make_move(unitMove, self.turn)
             self.pastMove = move
+            self.board = self.get_board_copy()
             self.rotate_turn()
         else:
             raise Exception("Invalid move.")
         
+    def move_follows_default_unit_rules(self, move: UltimateMove) -> bool:
+            unitGame = self.unitGames[move[0][0]][move[0][1]]
+            unitMove = move[1]
+            return unitGame.move_valid(unitMove)
+
+    def move_on_correct_unit_board(self, move: UltimateMove) -> bool:
+        if self.pastMove == None:
+            return True
+        
+        unitGame = self.unitGames[self.pastMove[1][0]][self.pastMove[1][1]]
+        if unitGame.is_game_over():
+            return True
+        
+        correctRow = self.pastMove[1][0] == move[0][0]
+        correctColumn = self.pastMove[1][1] == move[0][1]
+        return correctRow and correctColumn
+
+    def move_valid(self, move: UltimateMove) -> bool:
+        followsUnitRules = self.move_follows_default_unit_rules(move)
+        movesOnCorrectUnitBoard = self.move_on_correct_unit_board(move)
+        return followsUnitRules and movesOnCorrectUnitBoard
+
     def possible_moves(self) -> list[UltimateMove]:
+        possibleFirstDimensions = []
+        possibleSecondDimensions = []
+        for i in range(3):
+            for j in range(3):
+                possibleFirstDimensions.append((i, j))
+                possibleSecondDimensions.append((i, j))
+        
+        if self.pastMove != None and not self.unitGames[self.pastMove[1][0]][self.pastMove[1][1]].is_game_over():
+            possibleFirstDimensions = [self.pastMove[1]]
+
         possibleMoves = []
-        for ultimateRow in range(3):
-            for ultimateColumn in range(3):
-                ultimateMove = (ultimateRow, ultimateColumn)
-                for unitRow in range(3):
-                    for unitColumn in range(3):
-                        unitMove = (unitRow, unitColumn)
-                        move = (ultimateMove, unitMove)
-                        if self.ruleBook.is_valid(self.get_board_copy(), move, self.pastMove):
-                            possibleMoves.append(move)
+        for possibleFirstDimension in possibleFirstDimensions:
+            for possibleSecondDimension in possibleSecondDimensions:
+                move = (possibleFirstDimension, possibleSecondDimension)
+                if self.move_valid(move):
+                    possibleMoves.append(move)
         return possibleMoves
     
     def get_last_move(self) -> UltimateMove:
