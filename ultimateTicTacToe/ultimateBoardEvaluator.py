@@ -5,10 +5,11 @@ from numpy import int32
 
 from ultimateTicTacToe.ultimateHeuristic import *
 from unitTicTacToe.unitHeuristic import *
+from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe
 from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateBoardState, UltimateMove
 from unitTicTacToe.unitTicTacToeTypes import PlayerType
 
-UltimateHeuristic = Callable[[UltimateBoardState, UltimateMove, PlayerType], int]
+UltimateHeuristic = Callable[[UltimateTicTacToe], int]
 
 class UltimateBoardEvaluator:
     def __init__(self, heuristics: list[UltimateHeuristic], weights: NDArray[np.float64], readableNames: list[str]):
@@ -19,14 +20,14 @@ class UltimateBoardEvaluator:
         self.weights = weights
         self.readableNames = readableNames
 
-    def evaluate(self, board: UltimateBoardState, move: UltimateMove, player: PlayerType) -> int:
+    def evaluate(self, game: UltimateTicTacToe) -> int:
         heuristicCount = len(self.heuristics)
         scores = np.zeros(heuristicCount, dtype=int32)
         for i in range(heuristicCount):
             heuristic = self.heuristics[i]
-            scores[i] = heuristic(board, move, player)
+            scores[i] = heuristic(game)
         return scores @ self.weights
-        
+
 
 class UltimateBoardEvaluatorBuilder:
     def __init__(self):

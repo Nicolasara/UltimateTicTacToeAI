@@ -1,15 +1,12 @@
 import numpy as np
-from ultimateTicTacToe.ultimateTicTacToeBase import StrictUltimateTicTacToe, ultimate_board_state_to_unit_games
-from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateMove, UltimateBoardState
+from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe
 from unitTicTacToe.unitTicTacToeBase import PlayerType
-from ultimateTicTacToe.ultimateRuleBook import defaultUltimateRuleBook
-import math
 
-INFINITY = 147483648
+INFINITY = 1073741824
 
-def _check_num_in_ultimate_lines(board: UltimateBoardState, condition: str):
+def _check_num_in_ultimate_lines(game: UltimateTicTacToe, condition: str):
     result = 0
-    unit_games = ultimate_board_state_to_unit_games(board)
+    unit_games = game.unitGames
     def convert_winner_to_num(game):
         if (game.winner() == PlayerType.X):
             return 1
@@ -50,52 +47,52 @@ def _check_num_in_ultimate_lines(board: UltimateBoardState, condition: str):
     return result
 
 
-def XWinsUltimateGame(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    game = StrictUltimateTicTacToe(board, defaultUltimateRuleBook)
+def XWinsUltimateGame(game: UltimateTicTacToe) -> int:
     if game.winner() == PlayerType.X:
         return INFINITY
     return 0
 
-def OWinsUltimateGame(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    game = StrictUltimateTicTacToe(board, defaultUltimateRuleBook)
+def OWinsUltimateGame(game: UltimateTicTacToe) -> int:
     if game.winner() == PlayerType.O:
         return -INFINITY
     return 0
 
 # ### 1 if the player has won the board, 0 otherwise
-# def playerHasWonUltimateBoard(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-#     game = StrictUltimateTicTacToe(board, defaultUltimateRuleBook)
+# def playerHasWonUltimateBoard(game: UltimateTicTacToe) -> int:
 #     print("winner: ", game.winner())
 #     if game.winner() == player:
 #         return 1
 #     return 0
 
 # ### 1 if the opponent has won the board, 0 otherwise
-# def opponentHasWonUltimateBoard(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
+# def opponentHasWonUltimateBoard(game: UltimateTicTacToe) -> int:
 #     opponent = PlayerType.X if player == PlayerType.O else PlayerType.O
-#     game = StrictUltimateTicTacToe(board, defaultUltimateRuleBook)
 #     if game.winner() == opponent:
 #         return 1
 #     return 0
 
 
-def XCanMoveOnAnyBoard(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    unitBoard = ultimate_board_state_to_unit_games(board)[previousMove[1][0]][previousMove[1][1]]
+def XCanMoveOnAnyBoard(game: UltimateTicTacToe) -> int:
+    previousMove = game.pastMove
+    player = game.get_turn()
+    unitBoard = game.unitGames[previousMove[1][0]][previousMove[1][1]]
     if unitBoard.is_game_over():
         return 1 if player == PlayerType.X else 0
     return 0
     
-def OCanMoveOnAnyBoard(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    unitBoard = ultimate_board_state_to_unit_games(board)[previousMove[1][0]][previousMove[1][1]]
+def OCanMoveOnAnyBoard(game: UltimateTicTacToe) -> int:
+    previousMove = game.pastMove
+    player = game.get_turn()
+    unitBoard = game.unitGames[previousMove[1][0]][previousMove[1][1]]
     if unitBoard.is_game_over():
         return 1 if player == PlayerType.O else 0
     return 0
 
 
 # ### 1 if the move sends the opponent to a board that is over, 0 otherwise
-# def moveSendsOpponentToAnyBoard(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
+# def moveSendsOpponentToAnyBoard(game: UltimateTicTacToe) -> int:
 #     #get the unit board that the previous move sent the opponent to
-#     unitBoard = ultimate_board_state_to_unit_games(board)[previousMove[1][0]][previousMove[1][1]]
+#     unitBoard = game.unitGames[previousMove[1][0]][previousMove[1][1]]
 
 #     #if that board is over, then this rule evaluates true.
 #     if unitBoard.is_game_over():
@@ -103,50 +100,50 @@ def OCanMoveOnAnyBoard(board: UltimateBoardState, previousMove: UltimateMove, pl
 #     return 0
 
 # ### 0 if the move sends the opponent to a board that is over, 1 otherwise
-# def moveDoesNotSendOpponentToAnyBoard(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
+# def moveDoesNotSendOpponentToAnyBoard(game: UltimateTicTacToe) -> int:
 #     if moveSendsOpponentToAnyBoard(board, previousMove, player):
 #         return 0
 #     return 1
 
-def XUltimateTwoInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    return _check_num_in_ultimate_lines(board, '2X')
+def XUltimateTwoInARows(game: UltimateTicTacToe) -> int:
+    return _check_num_in_ultimate_lines(game, '2X')
 
-def OUltimateTwoInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    return _check_num_in_ultimate_lines(board, '2O')
+def OUltimateTwoInARows(game: UltimateTicTacToe) -> int:
+    return _check_num_in_ultimate_lines(game, '2O')
 
 # #counts unblocked ultimate two-in-a-rows for player
-# def playerUltimateTwoInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
+# def playerUltimateTwoInARows(game: UltimateTicTacToe) -> int:
 #     condition = '2X' if player == PlayerType.X else '2O'
-#     return _check_num_in_ultimate_lines(board, condition)
+#     return _check_num_in_ultimate_lines(game, condition)
 
 # #counts unblocked ultimate two-in-a-rows for opponent
-# def opponentUltimateTwoInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
+# def opponentUltimateTwoInARows(game: UltimateTicTacToe) -> int:
 #     condition = '2O' if player == PlayerType.X else '2X'
-#     return _check_num_in_ultimate_lines(board, condition)
+#     return _check_num_in_ultimate_lines(game, condition)
 
-def XUltimateOneInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    return _check_num_in_ultimate_lines(board, '1X')
+def XUltimateOneInARows(game: UltimateTicTacToe) -> int:
+    return _check_num_in_ultimate_lines(game, '1X')
 
-def OUltimateOneInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    return _check_num_in_ultimate_lines(board, '1O')
+def OUltimateOneInARows(game: UltimateTicTacToe) -> int:
+    return _check_num_in_ultimate_lines(game, '1O')
 
-def XBlockingOWins(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    return _check_num_in_ultimate_lines(board, '1X2O')
+def XBlockingOWins(game: UltimateTicTacToe) -> int:
+    return _check_num_in_ultimate_lines(game, '1X2O')
 
-def OBlockingXWins(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
-    return _check_num_in_ultimate_lines(board, '2X1O')
+def OBlockingXWins(game: UltimateTicTacToe) -> int:
+    return _check_num_in_ultimate_lines(game, '2X1O')
 
 # #counts unblocked ultimate one-in-a-rows for player
-# def playerUltimateOneInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
+# def playerUltimateOneInARows(game: UltimateTicTacToe) -> int:
 #     condition = '1X' if player == PlayerType.X else '1O'
-#     return _check_num_in_ultimate_lines(board, condition)
+#     return _check_num_in_ultimate_lines(game, condition)
 
 # #counts unblocked ultimate one-in-a-rows for opponent
-# def opponentUltimateOneInARows(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
+# def opponentUltimateOneInARows(game: UltimateTicTacToe) -> int:
 #     condition = '1O' if player == PlayerType.X else '1X'
-#     return _check_num_in_ultimate_lines(board, condition)
+#     return _check_num_in_ultimate_lines(game, condition)
 
 # #counts how many times the player is blocking a 2-in-a-row for the opponent
-# def blockedOpponentWins(board: UltimateBoardState, previousMove: UltimateMove, player: PlayerType) -> int:
+# def blockedOpponentWins(game: UltimateTicTacToe) -> int:
 #     condition = '1X2O' if player == PlayerType.X else '2X1O'
-#     return _check_num_in_ultimate_lines(board, condition)
+#     return _check_num_in_ultimate_lines(game, condition)

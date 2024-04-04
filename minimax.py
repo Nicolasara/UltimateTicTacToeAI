@@ -16,7 +16,7 @@ def minimax(game: UltimateTicTacToe, board_evaluator: UltimateBoardEvaluator, de
     """
     
     if game.is_game_over() or depth == 0:
-        return board_evaluator.evaluate(game.get_board_copy(), game.get_last_move(), game.get_turn())
+        return board_evaluator.evaluate(game)
     
     # if we are the maximizing player
     if maximizing:
