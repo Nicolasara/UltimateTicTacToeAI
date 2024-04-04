@@ -89,6 +89,9 @@ class TurnLessTicTacToe(TicTacToe):
         super().__init__()
         self.board = format_board(board)
         self.ruleBook = ruleBook
+        self.cached_winner = "Null"
+        self.cached_is_board_full = None
+        self.cached_possible_moves = None
 
     def get_turn(self) -> PlayerType:
         raise Exception("This implementation does not have a turn.")
@@ -103,15 +106,21 @@ class TurnLessTicTacToe(TicTacToe):
             else:   
                 cellState = CellState.O.value
             self.board[move[0]][move[1]] = cellState
+            self.cached_winner = "Null"
+            self.cached_is_board_full = None
+            self.cached_possible_moves = None
         else:
             raise Exception("Invalid move.")
 
     def possible_moves(self) -> list[Move]:
+        if self.cached_possible_moves != None:
+            return self.cached_possible_moves
         moves = np.array(np.meshgrid(np.arange(BoardSize), np.arange(BoardSize))).T.reshape(-1, 2)
         totalTiles = BoardSize * BoardSize
         with ThreadPoolExecutor(max_workers=totalTiles) as executor:
             validMoves = list(executor.map(lambda move: self.ruleBook.is_valid(self.get_board_copy(), move), moves))
             validMoves = np.array([moves[i] for i in range(len(validMoves)) if validMoves[i]])
+            self.cached_possible_moves = validMoves
             return list(validMoves)
     
     def has_someone_won(self) -> bool:
@@ -123,6 +132,8 @@ class TurnLessTicTacToe(TicTacToe):
         return hasSomeoneWon or boardFull
     
     def winner(self) -> PlayerType:
+        if self.cached_winner != "Null":
+            return self.cached_winner
         threesInARow = get_threes_in_a_row(self.get_board_copy())
         with ThreadPoolExecutor(max_workers=len(threesInARow)) as executor:
             winningThreeInARow = list(executor.map(is_wining_three_in_a_row, threesInARow))
@@ -130,10 +141,13 @@ class TurnLessTicTacToe(TicTacToe):
             oThreesInARow = np.sum((threesInARow[winningThreeInARow][:, 0] == CellState.O.value)) 
         
         if xThreesInARow == 0 and oThreesInARow == 0:
+            self.cached_winner = None
             return None
         elif xThreesInARow == 0:
+            self.cached_winner = PlayerType.O
             return PlayerType.O
         elif oThreesInARow == 0:
+            self.cached_winner = PlayerType.X
             return PlayerType.X
         else:
             raise Exception("There should only be one winner, but the board seems to have multiple winners.")
@@ -149,7 +163,11 @@ class TurnLessTicTacToe(TicTacToe):
             return Result.DRAW
 
     def is_board_full(self) -> bool:
-        return CellState.EMPTY.value not in self.board
+        if self.cached_is_board_full != None:
+            return self.cached_is_board_full
+        boardFull = CellState.EMPTY.value not in self.board
+        self.cached_is_board_full = boardFull
+        return boardFull
     
     def toString(self) -> str:
         boardString = ""
