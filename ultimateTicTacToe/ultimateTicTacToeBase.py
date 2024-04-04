@@ -52,10 +52,12 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     """
     def __init__(self, board: UltimateBoardState, ruleBook: UltimateRuleBook = defaultUltimateRuleBook, turn: PlayerType = PlayerType.X):
         super().__init__()  
+        board = format_board(board)
         self.unitGames = ultimate_board_state_to_unit_games(board)
         self.ruleBook = ruleBook
         self.turn = turn
         self.pastMove = None
+        self.board = board
 
     def get_turn(self) -> PlayerType:
         return self.turn
@@ -138,12 +140,8 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
         self.turn = PlayerType.X if self.turn == PlayerType.O else PlayerType.O
 
     def is_board_full(self) -> bool:
-        flattenedGames = [game for row in self.unitGames for game in row]
-        with ThreadPoolExecutor() as executor:
-            isBoardFull = list(executor.map(lambda game: game.is_board_full(), flattenedGames))
-            if not any(isBoardFull):
-                return False
-        return True
+        boardFull = CellState.EMPTY.value not in self.board
+        return boardFull
 
     def toString(self) -> str:
         #initialize board string
@@ -183,4 +181,16 @@ class UltimateTicTacToeFactory:
         emptyBoard = np.full((3, 3, 3, 3), CellState.EMPTY.value)
         return StrictUltimateTicTacToe(emptyBoard, defaultUltimateRuleBook)
     
+def format_board(board) -> UltimateBoardState:
+    formatted_board = np.full((3,3,3,3), CellState.EMPTY.value)
+    for i in range(3):
+        for j in range(3):
+            for k in range(3):
+                for l in range(3):
+                    if board[i][j][k][l] == CellState.X.value:
+                        formatted_board[i][j][k][l] = CellState.X.value
+                    elif board[i][j][k][l] == CellState.O.value:
+                        formatted_board[i][j][k][l] = CellState.O.value
+    return formatted_board
+
 game = UltimateTicTacToeFactory.emptyStrictGame()
