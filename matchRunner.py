@@ -4,6 +4,7 @@ from ultimateTicTacToe.ultimateTicTacToeTypes import UltimateMove
 from player import Player
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from multiprocessing import Pool
+import numpy as np
 
 # play a game between two AI players and return the winner
 def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, print_game = False, depth: int = 2):
@@ -61,13 +62,13 @@ def playAManualGame(AIplayerX: Player, depth: int = 2):
             move_input = input().split(" ")
             
             #convert move to two tuples
-            move = ((int(move_input[0]), int(move_input[1])), (int(move_input[2]), int(move_input[3])))
+            move = (np.array([int(move_input[0]), int(move_input[1])]), np.array([int(move_input[2]), int(move_input[3])]))
 
             #check if move is valid
-            while move not in game.possible_moves():
+            while not any((np.array_equal(move[0], arr1) and np.array_equal(move[1], arr2)) for arr1, arr2 in game.possible_moves()):
                 print("Invalid move. Try again: ")
                 move_input = input().split(" ")
-                move = ((int(move_input[0]), int(move_input[1])), (int(move_input[2]), int(move_input[3])))
+                move = (np.array([int(move_input[0]), int(move_input[1])]), np.array([int(move_input[2]), int(move_input[3])]))
 
         game.make_move(move)
         print(turn.value + " moves: " + str(move) + "\n")    
