@@ -6,6 +6,7 @@ from enum import Enum
 class PlayerType(Enum):
     X = 'X'
     O = 'O'
+    DRAW = '-'
 
 # A CellState is one of
 # - 'X'

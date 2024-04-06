@@ -1,5 +1,6 @@
 from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe, StrictUltimateTicTacToe
 from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator
+from unitTicTacToe.unitTicTacToeTypes import PlayerType, CellState
 import math
 
 
@@ -15,7 +16,11 @@ def minimax(game: UltimateTicTacToe, board_evaluator: UltimateBoardEvaluator, de
     :return (int, TwoDimensionalMove) The best heuristic value and its associated move
     """
     
-    if game.is_game_over() or depth == 0:
+    if game.is_game_over():
+        winner = game.winner()
+        return math.inf if winner == PlayerType.X else -math.inf
+    
+    if depth == 0:
         return board_evaluator.evaluate(game)
     
     # if we are the maximizing player
@@ -34,7 +39,7 @@ def minimax(game: UltimateTicTacToe, board_evaluator: UltimateBoardEvaluator, de
                 best_value = move_value
                 best_move = move
 
-            if move_value > beta:
+            if move_value >= beta:
                 break
 
             alpha = max(move_value, alpha)
@@ -60,7 +65,7 @@ def minimax(game: UltimateTicTacToe, board_evaluator: UltimateBoardEvaluator, de
                 best_value = move_value
                 best_move = move
 
-            if move_value < alpha:
+            if move_value <= alpha:
                 break
 
             beta = min(move_value, beta)

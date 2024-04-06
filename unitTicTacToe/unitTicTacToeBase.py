@@ -172,7 +172,7 @@ class TurnLessTicTacToe(TicTacToe):
 
         #if there is winner, print it surrounded by spaces
         if self.is_game_over():
-            winner = self.winner() if self.winner() != None else "-"
+            winner = self.winner() if self.winner() != None else PlayerType.DRAW
             for t in range(5):
                 if t == 2:
                     boardString += " " * 5 + winner.value + " " * 5 + "\n"

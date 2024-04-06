@@ -52,6 +52,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     def __init__(self, board: UltimateBoardState, ruleBook: UltimateRuleBook = defaultUltimateRuleBook, turn: PlayerType = PlayerType.X):
         super().__init__()  
         self.unitGames = ultimate_board_state_to_unit_games(board)
+        self.unit_games_list = sum(self.unitGames, [])
         self.ruleBook = ruleBook
         self.turn = turn
         self.pastMove = None
@@ -177,7 +178,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     def is_board_full(self) -> bool:
         if self.cached_is_board_full != None:
             return self.cached_is_board_full
-        boardFull = CellState.EMPTY.value not in self.board
+        boardFull = all(unit_game.is_game_over() for unit_game in self.unit_games_list)
         self.cached_is_board_full = boardFull
         return boardFull
 

@@ -54,8 +54,6 @@ class UltimateBoardEvaluatorFactory:
     ## TODO - add more heuristics from unitTicTacToe Heuristics
     def firstEvaluator() -> UltimateBoardEvaluator:
         builder = UltimateBoardEvaluatorBuilder()
-        builder.addHeuristic(XWinsUltimateGame, 1, "X wins ultimate game")
-        builder.addHeuristic(OWinsUltimateGame, 1, "O wins ultimate game")
         builder.addHeuristic(XCanMoveOnAnyBoard, 1, "X can move on any ultimate board")
         builder.addHeuristic(OCanMoveOnAnyBoard, 1, "O can move on any ultimateboard")
         builder.addHeuristic(XUltimateTwoInARows, 1, "X ultimate two in a row")

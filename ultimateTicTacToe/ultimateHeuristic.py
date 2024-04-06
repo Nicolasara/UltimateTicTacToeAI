@@ -46,17 +46,6 @@ def _check_num_in_ultimate_lines(game: UltimateTicTacToe, condition: str):
         result += 1
     return result
 
-
-def XWinsUltimateGame(game: UltimateTicTacToe) -> int:
-    if game.winner() == PlayerType.X:
-        return INFINITY
-    return 0
-
-def OWinsUltimateGame(game: UltimateTicTacToe) -> int:
-    if game.winner() == PlayerType.O:
-        return -INFINITY
-    return 0
-
 # ### 1 if the player has won the board, 0 otherwise
 # def playerHasWonUltimateBoard(game: UltimateTicTacToe) -> int:
 #     print("winner: ", game.winner())
