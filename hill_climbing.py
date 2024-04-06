@@ -16,7 +16,7 @@ def energy_function(board_evaluator: UltimateBoardEvaluator, depth: int = 2, wor
     playerX = Player(board_evaluator, maximizing=True)
     playerO = Player(board_evaluator, maximizing=False)
 
-    results = playAllFirstMovesPool(playerX, playerO, depth=depth, workers=60)
+    results = playAllFirstMovesPool(playerX, playerO, depth=depth, workers=workers)
 
     return results[0] / 81
 
