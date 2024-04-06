@@ -5,40 +5,82 @@ import math
 from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator
 import numpy as np
 
+# Pre-calculated number of wins for X, given depth
+INITIAL_WINS = {1: 9, 2: 29}
 
-def energy_function(board_evaluator: UltimateBoardEvaluator, depth: int = 2):
+def energy_function(board_evaluator: UltimateBoardEvaluator, depth: int = 2, workers: int = 60):
     """
-    Simulates a number of UltimateTicTacToe games and returns the win rate
-
-    :param int[] weights: an array of integer weights to run the game with
-
-    :return int The win rate
+    Simulates 81 UltimateTicTacToe games and returns the win rate for X
     """
 
     playerX = Player(board_evaluator, maximizing=True)
     playerO = Player(board_evaluator, maximizing=False)
 
-    results = playAllFirstMovesPool(playerX, playerO, depth=depth, workers=61)
+    results = playAllFirstMovesPool(playerX, playerO, depth=depth, workers=60)
 
     return results[0] / 81
 
-
-def hill_climbing_all_weights(evaluator: UltimateBoardEvaluator, num_iterations: int, depth: int = 2):
+def hill_climbing_per_weight(evaluator: UltimateBoardEvaluator, num_iterations: int, depth: int = 2, workers: int = 60):
     """
-    Our hill climbing algorithm to adjust the weights of game heuristics (changes all weights randomly at once)
-
-    :param dict initial_weights: an integer dictionary of weights to start with
-    :param int num_iterations: number of hill climbing iterations
-    :param int num_games: number of UltimateTicTacToe games to run per hill climbing iteration
-    :param int depth: minimax depth
-
-    :return (dict, int) The best found set of weights and its associated win rate
+    Adjusts weights individually (while keeping all other weights constant) 
     """
     
     current_weights = evaluator.get_weights()
-    current_win_rate = 0
+    current_win_rate = INITIAL_WINS[depth] / 81
     
     for _ in range(num_iterations):
+        print("Iteration: " + str(_))
+
+        d_weights = np.zeros(len(current_weights))
+        directions = [-1, 1]
+
+        # run 81 games for each weight in a random direction
+        for i in range(len(current_weights)):
+            print("Weight: " + str(i))
+
+            direction = rd.choice(directions)
+            weights_copy = current_weights.copy()
+            weights_copy[i] += direction * rd.uniform(0, 10)
+
+            d_win_rate = energy_function(evaluator.build_copy(weights_copy), depth=depth, workers=workers)
+
+            if d_win_rate > current_win_rate:
+                d_weights[i] = direction
+
+        print("D_weights:")
+        print(d_weights)
+
+        adjusted_weights = current_weights.copy()
+
+        # adjust all weights based on tests above
+        for i in range(len(adjusted_weights)):
+            adjusted_weights[i] += d_weights[i] * rd.uniform(0, 10)
+
+        # get a win rate with all weights adjusted
+        win_rate = energy_function(evaluator.build_copy(adjusted_weights), depth=depth, workers=workers)
+
+        if win_rate > current_win_rate:
+            current_weights = adjusted_weights
+            current_win_rate = win_rate
+
+        print("Current Weights and Win Rate:")
+        print(current_weights)
+        print(current_win_rate)
+
+    best_solution = (current_weights, current_win_rate)
+        
+    return best_solution
+
+def hill_climbing_all_weights(evaluator: UltimateBoardEvaluator, num_iterations: int, depth: int = 2, workers: int = 60):
+    """
+    Adjusts all weights randomly at once
+    """
+    
+    current_weights = evaluator.get_weights()
+    current_win_rate = INITIAL_WINS[depth] / 81
+    
+    for _ in range(num_iterations):
+        print("Iteration: " + str(_))
 
         adjusted_weights = current_weights.copy()
 
@@ -47,7 +89,7 @@ def hill_climbing_all_weights(evaluator: UltimateBoardEvaluator, num_iterations:
             adjusted_weights[i] += rd.uniform(-10, 10)
 
         # get a win rate with all weights adjusted
-        win_rate = energy_function(evaluator.build_copy(adjusted_weights), depth=depth)
+        win_rate = energy_function(evaluator.build_copy(adjusted_weights), depth=depth, workers=workers)
 
         if win_rate > current_win_rate:
             current_weights = adjusted_weights

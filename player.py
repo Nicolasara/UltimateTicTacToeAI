@@ -20,7 +20,7 @@ class Player:
         self.evaluator = board_evaluator
         self.maximizing = maximizing
     
-    def best_move(self, game, depth=1) -> TwoDimensionalMove:
+    def best_move(self, game, depth=2) -> TwoDimensionalMove:
         _, move = minimax(game, self.evaluator, depth, self.maximizing, True)
         return move
     
@@ -31,6 +31,6 @@ class Player:
         self.evaluator = evaluator
 
 class RandomPlayer(Player):
-    def best_move(self, game: UltimateTicTacToe, depth=1) -> TwoDimensionalMove:
+    def best_move(self, game: UltimateTicTacToe, depth=2) -> TwoDimensionalMove:
         possible_moves = game.possible_moves()
         return rd.choice(possible_moves)
