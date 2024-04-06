@@ -1,12 +1,12 @@
 import random as rd
 from player import Player
-from matchRunner import playAllFirstMoves
+from matchRunner import playAllFirstMovesPool
 import math
 from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator
 import numpy as np
 
 
-def energy_function(board_evaluator: UltimateBoardEvaluator):
+def energy_function(board_evaluator: UltimateBoardEvaluator, depth: int = 2):
     """
     Simulates a number of UltimateTicTacToe games and returns the win rate
 
@@ -18,9 +18,47 @@ def energy_function(board_evaluator: UltimateBoardEvaluator):
     playerX = Player(board_evaluator, maximizing=True)
     playerO = Player(board_evaluator, maximizing=False)
 
-    results = playAllFirstMoves(playerX, playerO)
+    results = playAllFirstMovesPool(playerX, playerO, depth=depth, workers=61)
 
     return results[0] / 81
+
+
+def hill_climbing_all_weights(evaluator: UltimateBoardEvaluator, num_iterations: int, depth: int = 2):
+    """
+    Our hill climbing algorithm to adjust the weights of game heuristics (changes all weights randomly at once)
+
+    :param dict initial_weights: an integer dictionary of weights to start with
+    :param int num_iterations: number of hill climbing iterations
+    :param int num_games: number of UltimateTicTacToe games to run per hill climbing iteration
+    :param int depth: minimax depth
+
+    :return (dict, int) The best found set of weights and its associated win rate
+    """
+    
+    current_weights = evaluator.get_weights()
+    current_win_rate = 0
+    
+    for _ in range(num_iterations):
+
+        adjusted_weights = current_weights.copy()
+
+        # adjust all weights based on tests above
+        for i in range(len(adjusted_weights)):
+            adjusted_weights[i] += rd.uniform(-10, 10)
+
+        # get a win rate with all weights adjusted
+        win_rate = energy_function(evaluator.build_copy(adjusted_weights), depth=depth)
+
+        if win_rate > current_win_rate:
+            current_weights = adjusted_weights
+            current_win_rate = win_rate
+
+        print(current_weights)
+        print(current_win_rate)
+
+    best_solution = (current_weights, current_win_rate)
+        
+    return best_solution
 
 
 def hill_climbing(evaluator: UltimateBoardEvaluator, num_iterations: int):

@@ -12,13 +12,19 @@ from unitTicTacToe.unitTicTacToeTypes import PlayerType
 UltimateHeuristic = Callable[[UltimateTicTacToe], int]
 
 class UltimateBoardEvaluator:
-    def __init__(self, heuristics: list[UltimateHeuristic], weights: NDArray[np.float64], readableNames: list[str]):
+    def __init__(self, heuristics: list[UltimateHeuristic], weights: NDArray[np.float32], readableNames: list[str]):
         if len(heuristics) != len(weights) or len(weights) != len(readableNames):
             raise ValueError("The number of heuristics, weights, and readable names must be the same")
         
         self.heuristics = heuristics
         self.weights = weights
         self.readableNames = readableNames
+
+    def get_weights(self):
+        return self.weights
+    
+    def build_copy(self, weights: NDArray[np.float32]):
+        return UltimateBoardEvaluator(self.heuristics, weights, self.readableNames)
 
     def evaluate(self, game: UltimateTicTacToe) -> int:
         heuristicCount = len(self.heuristics)
@@ -35,19 +41,13 @@ class UltimateBoardEvaluatorBuilder:
         self.weights = []
         self.readableNames = []
         
-    def addHeuristic(self, heuristic: UltimateHeuristic, weight: np.float64, readableName: str):
+    def addHeuristic(self, heuristic: UltimateHeuristic, weight: np.float32, readableName: str):
         self.heuristics.append(heuristic)
         self.weights.append(weight)
         self.readableNames.append(readableName)
 
-    def get_weights(self):
-        return self.weights
-    
-    def build_copy(self, weights: NDArray[np.float64]):
-        return UltimateBoardEvaluator(self.heuristics, weights, self.readableNames)
-
     def build(self) -> UltimateBoardEvaluator:
-        return UltimateBoardEvaluator(self.heuristics, np.array(self.weights, dtype=int32), self.readableNames)
+        return UltimateBoardEvaluator(self.heuristics, np.array(self.weights, dtype=np.float32), self.readableNames)
 
 class UltimateBoardEvaluatorFactory:
     @staticmethod

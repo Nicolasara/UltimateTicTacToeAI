@@ -2,6 +2,7 @@ from typing import NamedTuple
 from ultimateTicTacToe.ultimateTicTacToeBase import UltimateTicTacToe
 from minimax import minimax
 from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator
+import random as rd
 
 class Move(NamedTuple):
     row: int
@@ -28,3 +29,8 @@ class Player:
     
     def set_evaluator(self, evaluator):
         self.evaluator = evaluator
+
+class RandomPlayer(Player):
+    def best_move(self, game: UltimateTicTacToe, depth=1) -> TwoDimensionalMove:
+        possible_moves = game.possible_moves()
+        return rd.choice(possible_moves)
