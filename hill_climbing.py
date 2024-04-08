@@ -2,23 +2,73 @@ import random as rd
 from player import Player
 from matchRunner import playAllFirstMovesPool
 import math
-from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator
+from ultimateTicTacToe.ultimateBoardEvaluator import UltimateBoardEvaluator, UltimateBoardEvaluatorFactory
+from example_weights import EQUAL_BIAS, BLOCKING_BIAS, ROW_BIAS, BALANCED_BIAS
 import numpy as np
 
-# Pre-calculated number of wins for X, given depth
-INITIAL_WINS = {1: 9, 2: 29}
+BASE_EVALUATOR = UltimateBoardEvaluatorFactory.firstEvaluator()
 
 def energy_function(board_evaluator: UltimateBoardEvaluator, depth: int = 2, workers: int = 60):
     """
-    Simulates 81 UltimateTicTacToe games and returns the win rate for X
+    Simulates 81 UltimateTicTacToe games per opponent and returns the total performance score for X
     """
-
     playerX = Player(board_evaluator, maximizing=True)
-    playerO = Player(board_evaluator, maximizing=False)
 
-    results = playAllFirstMovesPool(playerX, playerO, depth=depth, workers=workers)
+    player_O_baseline = Player(BASE_EVALUATOR, maximizing=False)
+    player_O_equal_bias = Player(BASE_EVALUATOR.build_copy(EQUAL_BIAS), maximizing=False)
+    player_O_block_bias = Player(BASE_EVALUATOR.build_copy(BLOCKING_BIAS), maximizing=False)
+    player_O_row_bias = Player(BASE_EVALUATOR.build_copy(ROW_BIAS), maximizing=False)
+    playerO_balanced = Player(BASE_EVALUATOR.build_copy(BALANCED_BIAS), maximizing=False)
 
-    return results[0] / 81
+    opponents = [player_O_baseline, player_O_equal_bias, player_O_block_bias, player_O_row_bias, playerO_balanced]
+    total_results = [0, 0, 0]
+
+    for i in range(len(opponents)):
+        print("Opponent: " + str(i))
+        results = playAllFirstMovesPool(playerX, opponents[i], depth=depth, workers=workers)
+        total_results[0] += results[0]
+        total_results[1] += results[1]
+        total_results[2] += results[2]
+
+    print(total_results)
+
+    return total_results[0] + 0.5 * total_results[2]
+
+
+def hill_climbing_all_weights(initial_weights, initial_score: int, num_iterations: int, depth: int = 2, workers: int = 60):
+    """
+    Adjusts all weights randomly at once
+    """
+    
+    current_weights = initial_weights
+    current_score = initial_score
+    
+    for _ in range(num_iterations):
+        print("Iteration: " + str(_))
+
+        adjusted_weights = current_weights.copy()
+
+        for i in range(len(adjusted_weights)):
+            adjusted_weights[i] += rd.uniform(-10, 10)
+
+        print("Adjusted Weights:")
+        print(adjusted_weights)
+
+        # get a win rate with all weights adjusted
+        score = energy_function(BASE_EVALUATOR.build_copy(adjusted_weights), depth=depth, workers=workers)
+
+        if score > current_score:
+            current_weights = adjusted_weights
+            current_score = score
+
+        print("Current Weights and Score:")
+        print(current_weights)
+        print(current_score)
+
+    best_solution = (current_weights, current_score)
+        
+    return best_solution
+
 
 def hill_climbing_per_weight(evaluator: UltimateBoardEvaluator, num_iterations: int, depth: int = 2, workers: int = 60):
     """
@@ -70,38 +120,6 @@ def hill_climbing_per_weight(evaluator: UltimateBoardEvaluator, num_iterations: 
     best_solution = (current_weights, current_win_rate)
         
     return best_solution
-
-def hill_climbing_all_weights(evaluator: UltimateBoardEvaluator, num_iterations: int, depth: int = 2, workers: int = 60):
-    """
-    Adjusts all weights randomly at once
-    """
-    
-    current_weights = evaluator.get_weights()
-    current_win_rate = INITIAL_WINS[depth] / 81
-    
-    for _ in range(num_iterations):
-        print("Iteration: " + str(_))
-
-        adjusted_weights = current_weights.copy()
-
-        # adjust all weights based on tests above
-        for i in range(len(adjusted_weights)):
-            adjusted_weights[i] += rd.uniform(-10, 10)
-
-        # get a win rate with all weights adjusted
-        win_rate = energy_function(evaluator.build_copy(adjusted_weights), depth=depth, workers=workers)
-
-        if win_rate > current_win_rate:
-            current_weights = adjusted_weights
-            current_win_rate = win_rate
-
-        print(current_weights)
-        print(current_win_rate)
-
-    best_solution = (current_weights, current_win_rate)
-        
-    return best_solution
-
 
 def hill_climbing(evaluator: UltimateBoardEvaluator, num_iterations: int):
     """

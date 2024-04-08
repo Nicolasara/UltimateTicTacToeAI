@@ -31,8 +31,8 @@ def playAGame(playerX: Player, playerO: Player, firstMove: UltimateMove = None, 
             print(turn.value + " moves: " + str(move) + "\n")
             print(game.toString())
     winner = game.winner().value if game.winner() != None else "Tie"
-    if print_game:
-        print("Game over. Winner: " + winner + "\n")
+    
+    print("Game over. Winner: " + winner + "\n")
     # print("First move: " + str(firstMove) + " Winner: " + winner)
     return winner
 
@@ -97,7 +97,7 @@ def playAllFirstMovesPool(playerX: Player, playerO: Player, depth: int = 2, work
         result_counts[result] += 1
 
     #return X and O wins
-    return (result_counts['X'], result_counts['O'])
+    return (result_counts['X'], result_counts['O'], result_counts["Tie"])
 
 '''
 # play a set of games between two AI and return the number of wins for each player
