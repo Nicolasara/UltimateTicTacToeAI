@@ -118,44 +118,37 @@ class TurnLessTicTacToe(TicTacToe):
         return onEmptyCell and gameNotOver
 
     def possible_moves(self) -> list[Move]:
+        if self.is_game_over():
+            return []
         if self.cached_possible_moves != None:
             return self.cached_possible_moves
         moves = np.array(np.meshgrid(np.arange(BoardSize), np.arange(BoardSize))).T.reshape(-1, 2)
-        totalTiles = BoardSize * BoardSize
-        with ThreadPoolExecutor(max_workers=totalTiles) as executor:
-            validMoves = list(executor.map(lambda move: self.move_valid(move), moves))
-            validMoves = np.array([moves[i] for i in range(len(validMoves)) if validMoves[i]])
-            self.cached_possible_moves = validMoves
-            return list(validMoves)
+        validMoves = [move for move in moves if self.move_valid(move)]
+        return validMoves
     
     def has_someone_won(self) -> bool:
         return self.winner() != None
 
     def is_game_over(self) -> bool:
-        hasSomeoneWon = self.has_someone_won()
-        boardFull = self.is_board_full()
-        return hasSomeoneWon or boardFull
+        return self.is_board_full() or self.has_someone_won()
     
     def winner(self) -> PlayerType:
         if self.cached_winner != "Null":
             return self.cached_winner
-        threesInARow = get_threes_in_a_row(self.get_board_copy())
-        with ThreadPoolExecutor(max_workers=len(threesInARow)) as executor:
-            winningThreeInARow = list(executor.map(is_wining_three_in_a_row, threesInARow))
-            xThreesInARow = np.sum((threesInARow[winningThreeInARow][:, 0] == CellState.X.value))
-            oThreesInARow = np.sum((threesInARow[winningThreeInARow][:, 0] == CellState.O.value)) 
-        
-        if xThreesInARow == 0 and oThreesInARow == 0:
-            self.cached_winner = None
-            return None
-        elif xThreesInARow == 0:
-            self.cached_winner = PlayerType.O
-            return PlayerType.O
-        elif oThreesInARow == 0:
-            self.cached_winner = PlayerType.X
-            return PlayerType.X
-        else:
-            raise Exception("There should only be one winner, but the board seems to have multiple winners.")
+        threesInARow = get_threes_in_a_row(self.board)
+        for threeInARow in threesInARow:
+            if is_wining_three_in_a_row(threeInARow):
+                if threeInARow[0] == CellState.X.value:
+                    self.cached_winner = PlayerType.X
+                    return PlayerType.X
+                elif threeInARow[0] == CellState.O.value:
+                    self.cached_winner = PlayerType.O
+                    return PlayerType.O
+                else:
+                    raise Exception("Invalid cell state.")
+                    
+        self.cached_winner = None
+        return None
 
     def result(self) -> Result:
         if not self.is_game_over():
@@ -179,7 +172,7 @@ class TurnLessTicTacToe(TicTacToe):
 
         #if there is winner, print it surrounded by spaces
         if self.is_game_over():
-            winner = self.winner() if self.winner() != None else "-"
+            winner = self.winner() if self.winner() != None else PlayerType.DRAW
             for t in range(5):
                 if t == 2:
                     boardString += " " * 5 + winner.value + " " * 5 + "\n"
@@ -233,12 +226,12 @@ class TicTacToeFactory:
     def turn_less_game_from_board(board: BoardState) -> TicTacToe:
         return TurnLessTicTacToe(board, defaultRuleBook)
 
-def format_board(board) -> BoardState:
-    formatted_board = np.full((3,3), CellState.EMPTY.value)
-    for i in range(3):
-        for j in range(3):
-            if board[i][j] == CellState.X.value:
-                formatted_board[i][j] = CellState.X.value
-            elif board[i][j] == CellState.O.value:
-                formatted_board[i][j] = CellState.O.value
-    return formatted_board
+# def format_board(board) -> BoardState:
+#     formatted_board = np.full((3,3), CellState.EMPTY.value)
+#     for i in range(3):
+#         for j in range(3):
+#             if board[i][j] == CellState.X.value:
+#                 formatted_board[i][j] = CellState.X.value
+#             elif board[i][j] == CellState.O.value:
+#                 formatted_board[i][j] = CellState.O.value
+#     return formatted_board
