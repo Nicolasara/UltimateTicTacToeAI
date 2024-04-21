@@ -8,7 +8,18 @@ import numpy as np
 
 BASE_EVALUATOR = UltimateBoardEvaluatorFactory.firstEvaluator()
 
-def energy_function(board_evaluator: UltimateBoardEvaluator, depth: int = 2, workers: int = 60):
+def energy_function_adversarial(x_weights, o_weights, depth: int = 2, workers: int = 60):
+    """
+    Simulates 81 UltimateTicTacToe games between X and O and returns the total performance score for X
+    """
+    playerX = Player(BASE_EVALUATOR.build_copy(x_weights), maximizing=True)
+    playerO = Player(BASE_EVALUATOR.build_copy(o_weights), maximizing=False)
+
+    results = playAllFirstMovesPool(playerX, playerO, depth=depth, workers=workers)
+
+    return results
+
+def energy_function_archetypal(board_evaluator: UltimateBoardEvaluator, depth: int = 2, workers: int = 60):
     """
     Simulates 81 UltimateTicTacToe games per opponent and returns the total performance score for X
     """
@@ -30,14 +41,90 @@ def energy_function(board_evaluator: UltimateBoardEvaluator, depth: int = 2, wor
         total_results[1] += results[1]
         total_results[2] += results[2]
 
-    print(total_results)
-
-    return total_results[0] + 0.5 * total_results[2]
+    return total_results[0]
 
 
-def hill_climbing_all_weights(initial_weights, initial_score: int, num_iterations: int, depth: int = 2, workers: int = 60):
+def hill_climbing_adversarial(initial_weights, num_iterations: int, depth: int = 2, workers: int = 60):
     """
-    Adjusts all weights randomly at once
+    Adversarial hill climbing
+
+    :param list initial_weights: an integer dictionary of weights to start with
+    :param int num_iterations: number of hill climbing iterations
+    :param int depth: minimax depth
+    :param int workers: number of pool workers
+
+    :return (list, list, int) The best weights for X, best for weights for O, and the best win rate
+    """
+    current_x_weights = initial_weights
+    current_o_weights = initial_weights
+
+    current_score = 34
+
+    x_turn = True
+    
+    for i in range(num_iterations):
+        print("Iteration: " + str(i))
+
+        if x_turn:
+            print("Adjusting Player X...")
+
+            adjusted_weights = current_x_weights.copy()
+
+            for i in range(len(adjusted_weights)):
+                adjusted_weights[i] += rd.uniform(-10, 10)
+
+            print("Adjusted Weights:")
+            print(adjusted_weights)
+
+            # get a win rate with all weights adjusted
+            energy = energy_function_adversarial(adjusted_weights, current_o_weights, depth=depth, workers=workers)
+            score = energy[0]
+
+            if score > current_score:
+                current_x_weights = adjusted_weights
+                current_score = score
+                x_turn = False
+        else:
+            print("Adjusting Player O...")
+
+            adjusted_weights = current_o_weights.copy()
+
+            for i in range(len(adjusted_weights)):
+                adjusted_weights[i] += rd.uniform(-10, 10)
+
+            print("Adjusted Weights:")
+            print(adjusted_weights)
+
+            # get a win rate with all weights adjusted
+            energy = energy_function_adversarial(current_x_weights, adjusted_weights, depth=depth, workers=workers)
+            score = energy[0]
+
+            if score < current_score:
+                current_o_weights = adjusted_weights
+                current_score = score
+                x_turn = True
+
+        print("Current X Weights:")
+        print(current_x_weights)
+        print("Current O Weights:")
+        print(current_o_weights)
+        print("Current Score:")
+        print(current_score)
+
+    best_solution = (current_x_weights, current_o_weights, score)
+        
+    return best_solution
+
+def hill_climbing_archetypal(initial_weights, initial_score: int, num_iterations: int, depth: int = 2, workers: int = 60):
+    """
+    Archetypal hill climbing
+
+    :param list initial_weights: an integer dictionary of weights to start with
+    :param int num_iterations: number of hill climbing iterations
+    :param int depth: minimax depth
+    :param int workers: number of pool workers
+
+    :return (list, int) The best weights for X and the best win rate
     """
     
     current_weights = initial_weights
@@ -55,7 +142,7 @@ def hill_climbing_all_weights(initial_weights, initial_score: int, num_iteration
         print(adjusted_weights)
 
         # get a win rate with all weights adjusted
-        score = energy_function(BASE_EVALUATOR.build_copy(adjusted_weights), depth=depth, workers=workers)
+        score = energy_function_archetypal(BASE_EVALUATOR.build_copy(adjusted_weights), depth=depth, workers=workers)
 
         if score > current_score:
             current_weights = adjusted_weights
@@ -69,6 +156,9 @@ def hill_climbing_all_weights(initial_weights, initial_score: int, num_iteration
         
     return best_solution
 
+'''
+
+OLD UNUSED VERSIONS OF HILL_CLIMBING
 
 def hill_climbing_per_weight(evaluator: UltimateBoardEvaluator, num_iterations: int, depth: int = 2, workers: int = 60):
     """
@@ -173,126 +263,4 @@ def hill_climbing(evaluator: UltimateBoardEvaluator, num_iterations: int):
         
     return best_solution
 
-
-
-
-
-
-
-
-"""
-
-OLD IMPLEMENTATIONS, IGNORE FOR NOW
-
-"""
-
-def hill_climbing_adaptive(initial_weights, num_iterations: int, num_games: int):
-    """
-    The same as the hill climbing function above, but now we dynamically adjust
-    how significantly the weights change per iteration
-
-    :param int[] initial_weights: an array of integer weights to start with
-    :param int num_iterations: number of hill climbing iterations
-    :param int num_games: number of UltimateTicTacToe games to run per hill climbing iteration
-
-    :return (int[], int) The best found set of weights and its associated win rate
-    """
-    
-    current_weights = initial_weights
-    current_win_rate = 0
-    learning_rate = 1
-    
-    for _ in range(num_iterations):
-        adjusted_weights = [weight + learning_rate * rd.uniform(-1, 1) for weight in current_weights]
-        win_rate = energy_function(adjusted_weights, num_games)
-
-        if win_rate > current_win_rate:
-            current_weights = adjusted_weights
-            current_win_rate = win_rate
-            learning_rate *= 1.1
-        else:
-            learning_rate *= 0.9
-
-    best_solution = (current_weights, current_win_rate)
-        
-    return best_solution
-
-
-def hill_climbing_random_uphill(initial_weights, num_iterations: int, num_games: int, probability: float):
-    """
-    Hill climbing with a random probability of keeping a worse weight change
-
-    :param int[] initial_weights: an array of integer weights to start with
-    :param int num_iterations: number of hill climbing iterations
-    :param int num_games: number of UltimateTicTacToe games to run per hill climbing iteration
-    :param float probability: probability of keeping worse weight change
-
-    :return (int[], int) The best found set of weights and its associated win rate
-    """
-
-    current_weights = initial_weights
-    current_win_rate = 0
-    best_weights = current_weights
-    best_win_rate = current_win_rate
-
-    for _ in range(num_iterations):
-        adjusted_weights = [weight + rd.uniform(-1, 1) for weight in current_weights]
-        win_rate = energy_function(adjusted_weights, num_games)
-
-        if win_rate > best_win_rate:
-            best_weights = adjusted_weights
-            best_win_rate = win_rate
-            current_weights = adjusted_weights
-            current_win_rate = win_rate
-        elif win_rate > current_win_rate:
-            current_weights = adjusted_weights
-            current_win_rate = win_rate
-        elif rd.random() < probability:
-            current_weights = adjusted_weights
-            current_win_rate = win_rate
-
-    best_solution = (best_weights, best_win_rate)
-
-    return best_solution
-
-
-def hill_climbing_annealing(initial_weights, num_iterations: int, num_games: int, T: float, decay: float):
-    """
-    Hill climbing utilizing simulated annealing
-
-    :param int[] initial_weights: an array of integer weights to start with
-    :param int num_iterations: number of hill climbing iterations
-    :param int num_games: number of UltimateTicTacToe games to run per hill climbing iteration
-    :param float T: initial temperature
-    :param float decay: decay rate to decrease temperature per iteration
-
-    :return (int[], int) The best found set of weights and its associated win rate
-    """
-
-    current_weights = initial_weights
-    current_win_rate = 0
-    best_weights = current_weights
-    best_win_rate = current_win_rate
-    curr_T = T
-
-    for _ in range(num_iterations):
-        adjusted_weights = [weight + rd.uniform(-1, 1) for weight in current_weights]
-        win_rate = energy_function(adjusted_weights, num_games)
-
-        if win_rate > best_win_rate:
-            best_weights = adjusted_weights
-            best_win_rate = win_rate
-            current_weights = adjusted_weights
-            current_win_rate = win_rate
-        elif win_rate > current_win_rate:
-            current_weights = adjusted_weights
-            current_win_rate = win_rate
-        elif rd.random() < (math.e)**((win_rate - current_win_rate)/curr_T):
-            current_weights = adjusted_weights
-            current_win_rate = win_rate
-
-        curr_T *= decay
-
-    best_solution = (best_weights, best_win_rate)
-
-    return best_solution
+'''

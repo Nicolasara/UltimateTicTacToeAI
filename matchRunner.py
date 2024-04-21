@@ -46,6 +46,13 @@ class GamePlayer:
 
     def __call__(self, firstMove):
         return playAGame(self.playerX, self.playerO, firstMove, False, self.depth)
+    
+class PostHillClimbingGamePlayer:
+    def __init__(self, playerX):
+        self.playerX = playerX
+
+    def __call__(self, playerO, firstMove):
+        return playAGame(self.playerX, playerO, firstMove, False, 2)
 
 # play a game between an AI player and a manual player
 def playAManualGame(AIplayerX: Player, depth: int = 2):
