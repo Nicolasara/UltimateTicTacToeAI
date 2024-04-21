@@ -39,10 +39,12 @@ def minimax(game: UltimateTicTacToe, board_evaluator: UltimateBoardEvaluator, de
                 best_value = move_value
                 best_move = move
 
+
             if move_value >= beta:
                 break
 
             alpha = max(move_value, alpha)
+
 
         if starting:
             return best_value, best_move

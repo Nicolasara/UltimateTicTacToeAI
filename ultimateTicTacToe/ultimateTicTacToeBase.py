@@ -51,6 +51,7 @@ class StrictUltimateTicTacToe(UltimateTicTacToe):
     """
     def __init__(self, board: UltimateBoardState, ruleBook: UltimateRuleBook = defaultUltimateRuleBook, turn: PlayerType = PlayerType.X):
         super().__init__()  
+        board = format_board(board)
         self.unitGames = ultimate_board_state_to_unit_games(board)
         self.unit_games_list = sum(self.unitGames, [])
         self.ruleBook = ruleBook

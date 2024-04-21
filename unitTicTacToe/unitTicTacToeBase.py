@@ -87,7 +87,7 @@ class TurnLessTicTacToe(TicTacToe):
 
     def __init__(self, board: BoardState, ruleBook: RuleBook):
         super().__init__()
-        self.board = board
+        self.board = format_board(board)
         self.ruleBook = ruleBook
         self.cached_winner = "Null"
         self.cached_is_board_full = None
